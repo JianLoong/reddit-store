@@ -44,6 +44,11 @@ const fetchSubmission = (index) => {
             showLoading(index, false);
             buildSubmissions(json);
             processSentiments(index);
+        })
+        .catch(err => {
+            console.log(err);
+            showLoading("submissions", false);
+            showErrorDiv("submissions", "Please try at another time.")
         });
 }
 
