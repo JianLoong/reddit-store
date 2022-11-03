@@ -1,7 +1,7 @@
 // Method to fetch the indexes
-const fetchIndexes = (utc, size) => {
+const fetchIndexes = (utc, size, order) => {
 
-    if (size > 100){
+    if (size > 100) {
         showErrorDiv("submissions", "Cannot retrieve mroe than 100 post per page")
         return;
     }
@@ -12,6 +12,13 @@ const fetchIndexes = (utc, size) => {
         .then(data => {
             const response = JSON.parse(data);
             let indexes = response["indexes"];
+            let created_utcs = response["created_utcs"];
+            let scores = response["scores"];
+
+            indexes = sortIndexes(indexes, created_utcs, scores);
+
+            console.log(created_utcs);
+
             indexes = indexes.slice(0, size);
             // We build empty divs in preparation for the payload
             createDiv(indexes);
@@ -27,13 +34,43 @@ const fetchIndexes = (utc, size) => {
         });
 }
 
+
+const sortIndexes = (indexes, created_utc, scores) => {
+    // Clone the array so that other things dont die
+
+    const sortOrder = document.getElementById("sortOrder");
+    let cloned = [...indexes];
+
+    if (sortOrder.value == "newest") {
+        
+        cloned.sort((a, b) => {
+            let x = created_utc[indexes.indexOf(a)];
+            let y = created_utc[indexes.indexOf(b)];
+
+            return x - y;
+        })
+    }
+    else {
+       
+        cloned.sort((a, b) => {
+            let x = scores[indexes.indexOf(a)];
+            let y = scores[indexes.indexOf(b)];
+
+            return y - x;
+        })
+    }
+
+    console.log("Sorted");
+    return cloned;
+}
+
 const showErrorDiv = (id, errorMessage) => {
 
     errorDiv = document.getElementById(id);
 
     htmlString = '<div class="alert alert-warning" role="alert">';
     htmlString += errorMessage;
-    htmlString +='</div >'
+    htmlString += '</div >'
 
     errorDiv.innerHTML = htmlString;
 }
@@ -133,7 +170,7 @@ const makeCloud = (id, words) => {
 
     let sum = 0;
 
-    for (let i = 0; i < keys.length; i++){
+    for (let i = 0; i < keys.length; i++) {
         processedWords.push({
             "text": keys[i],
             "size": values[i]
@@ -187,7 +224,7 @@ const buildSubmissions = (submission) => {
     htmlString += "<small>" + convertDate(submission.created_utc) + "</small>";
     htmlString += "<p></p>"
     htmlString += "" + makeHTMLFromString(submission.selftext) + "";
-   
+
 
 
     let link = "https://reddit.com/" + submission.permalink;
@@ -336,13 +373,34 @@ const selectPost = () => {
     const yesterday_utc = Date.UTC(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()) / 1000;
 
     const noOfPost = document.getElementById("numberOfPost");
+    const sortOrder = document.getElementById("sortOrder").value;
 
     noOfPost.addEventListener("change", (event) => {
         submissionDiv = document.getElementById("submissions");
         submissionDiv.innerHTML = "";
-        fetchIndexes(yesterday_utc, event.target.value);
+        fetchIndexes(yesterday_utc, event.target.value, sortOrder);
     })
 
+}
+
+const selectOrder = () => {
+    const sortOrder = document.getElementById("sortOrder");
+
+    let today = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000);
+    
+    let yesterday = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000)
+    yesterday.setDate(today.getDate() - 1);
+
+    const yesterday_utc = Date.UTC(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()) / 1000;
+
+
+    const noOfPost = document.getElementById("numberOfPost").value;
+
+    sortOrder.addEventListener("change", (event) => {
+        submissionDiv = document.getElementById("submissions");
+        submissionDiv.innerHTML = "";
+        fetchIndexes(yesterday_utc, noOfPost, event.target.value);
+    })
 }
 
 const defaultPosts = () => {
@@ -354,8 +412,9 @@ const defaultPosts = () => {
 
     const yesterday_utc = Date.UTC(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()) / 1000;
 
-    fetchIndexes(yesterday_utc, 5)
+    fetchIndexes(yesterday_utc, 5, "hot")
 }
 
 selectPost();
 defaultPosts()
+selectOrder();
