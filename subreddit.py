@@ -143,12 +143,18 @@ def create_warehouse():
     
     results = []
     indexes = []
+    created_utcs = []
+    scores = []
         
     for index in range(0,len(submissions)):
         _submission_id = (submissions[index]["submission_id"])
         _submission_pk = submissions[index]["id"]
+        _score = submissions[index]["score"]
+        _created_utc = submissions[index]["created_utc"]
         
         indexes.append(_submission_pk)
+        scores.append(_score)
+        _created_utc(_created_utc)
 
         _comment_query = Comment.select(Comment.message).where(Comment.submission == _submission_id)
         _replies_list = list(_comment_query.dicts())
@@ -163,7 +169,9 @@ def create_warehouse():
     # print(json.dumps(submissions[0]))
     
     json_indexes = {
-        "indexes": indexes
+        "indexes": indexes,
+        "scores": scores,
+        "created_utcs": created_utcs
     }
     
     # Create indexes for query

@@ -187,6 +187,7 @@ const buildSubmissions = (submission) => {
     htmlString += "<small>" + convertDate(submission.created_utc) + "</small>";
     htmlString += "<p></p>"
     htmlString += "" + makeHTMLFromString(submission.selftext) + "";
+   
 
 
     let link = "https://reddit.com/" + submission.permalink;
@@ -194,6 +195,7 @@ const buildSubmissions = (submission) => {
     htmlString +=
         "<p>View original post <a href='" + link + "' class='card-link'>here</a></p>";
 
+    htmlString += "<p>Number of replies <strong>" + submission.replies.length + "</strong></p>";
     // replyString = JSON.stringify(submission.replies);
 
 
