@@ -126,6 +126,21 @@ const makeCloud = (id, words) => {
     // Get all keys
     words = Object.keys(words);
 
+    let keys = Object.keys(words);
+    let values = Object.values(words);
+
+    let processedWords = [];
+
+    let sum = 0;
+
+    for (let i = 0; i < keys.length; i++){
+        processedWords.push({
+            "text": keys[i],
+            "size": values[i]
+        })
+        sum += values;
+    }
+
     // console.log(cloudId);
     const width = document.getElementById(id + "_cloud").getBoundingClientRect().width;
 
