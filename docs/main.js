@@ -1,6 +1,11 @@
 // Method to fetch the indexes
 const fetchIndexes = (utc, size) => {
 
+    if (size > 100){
+        showErrorDiv("submissions", "Cannot retrieve mroe than 100 post per page")
+        return;
+    }
+
     showLoading("submissions", true);
     fetch("./api/indexes/" + utc + ".json")
         .then(response => response.text())
@@ -18,7 +23,7 @@ const fetchIndexes = (utc, size) => {
         .catch(err => {
             console.log(err);
             showLoading("submissions", false);
-            showErrorDiv("submissions", "Please try at another time.")
+            showErrorDiv("submissions", "Please try at another time.");
         });
 }
 
@@ -120,7 +125,6 @@ const makeCloud = (id, words) => {
 
     // Get all keys
     words = Object.keys(words);
-
 
     // console.log(cloudId);
     const width = document.getElementById(id + "_cloud").getBoundingClientRect().width;
@@ -329,7 +333,7 @@ const defaultPosts = () => {
     let now = new Date();
     let today = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000);
     let yesterday = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000)
-    yesterday.setDate(today.getDate() - 2)
+    yesterday.setDate(today.getDate() - 1)
 
     const yesterday_utc = Date.UTC(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()) / 1000;
 
