@@ -9,4 +9,5 @@ cd /home/pi/reddit-store
 git add .
 git commit -m "Updated"
 # GIT_SSH_COMMAND='ssh -i /home/pi/redditbot' git push 
+date >> /home/pi/reddit-store/push.log 2>&1
 GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa -F /dev/null" git push >> /home/pi/reddit-store/push.log 2>&1

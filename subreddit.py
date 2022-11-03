@@ -154,7 +154,7 @@ def create_warehouse():
         
         indexes.append(_submission_pk)
         scores.append(_score)
-        _created_utc(_created_utc)
+        created_utcs.append(_created_utc)
 
         _comment_query = Comment.select(Comment.message).where(Comment.submission == _submission_id)
         _replies_list = list(_comment_query.dicts())
