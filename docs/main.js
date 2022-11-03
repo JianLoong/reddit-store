@@ -117,6 +117,11 @@ const makeCloud = (id, words) => {
     words = Object.keys(words);
 
 
+    // console.log(cloudId);
+    const width = document.getElementById(id + "_cloud").getBoundingClientRect().width;
+
+    // console.log(computedWidth);
+
     const draw = (words) => {
         d3.select(cloudId).append("svg")
             .attr("width", layout.size()[0])
@@ -136,7 +141,7 @@ const makeCloud = (id, words) => {
     }
 
     var layout = d3.layout.cloud()
-        .size([300, 300])
+        .size([width, width])
         .words(words.map(function (d) {
             return { text: d, size: 10 + Math.random() * 90 };
         }))
