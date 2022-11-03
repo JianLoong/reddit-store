@@ -16,7 +16,7 @@ subreddit_name = "AmItheAsshole";
 reddit = None
 db = SqliteDatabase(subreddit_name + '.sqlite')
 UPDATE = True
-POST_LIMIT = 20
+POST_LIMIT = 30
 
 class BaseModel(Model):
     class Meta:
