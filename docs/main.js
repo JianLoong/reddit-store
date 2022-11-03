@@ -72,7 +72,7 @@ const createDiv = (indexes) => {
         htmlString += "<div id =" + index + "></div>";
 
         htmlString += "<div class='row'>"
-        htmlString += "<div class='col-4'>"
+        htmlString += "<div class='col-lg-4'>"
 
         let afinnDivId = index + "_afinn";
         htmlString += "<div class='' id =" + afinnDivId + " +></div>";
@@ -82,7 +82,7 @@ const createDiv = (indexes) => {
 
         htmlString += "</div>"
 
-        htmlString += "<div class='col-4'>"
+        htmlString += "<div class='col-lg-4'>"
         let nrc = index + "_nrc";
         htmlString += "<div class='' id =" + nrc + "></div>";
 
@@ -90,9 +90,9 @@ const createDiv = (indexes) => {
 
         let chart = index + "_chart";
 
-        htmlString += "<div class='col-4'>"
+        htmlString += "<div class='col-lg-4'>"
         // htmlString += "<h5 class='card-title'><p class=text-center>" + "Breakdown of Replies" + "</p></h5>";
-        htmlString += "<canvas id='" + chart + "'width='400' height='400'></canvas>";
+        htmlString += "<canvas id='" + chart + "'width='' height='400'></canvas>";
         htmlString += "</div>";
 
         // htmlString += "<div class='col-6'>"
@@ -136,7 +136,7 @@ const makeCloud = (id, words) => {
     }
 
     var layout = d3.layout.cloud()
-        .size([400, 400])
+        .size([300, 300])
         .words(words.map(function (d) {
             return { text: d, size: 10 + Math.random() * 90 };
         }))
