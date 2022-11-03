@@ -333,7 +333,7 @@ const defaultPosts = () => {
 
     const yesterday_utc = Date.UTC(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()) / 1000;
 
-    fetchIndexes(yesterday_utc)
+    fetchIndexes(yesterday_utc, 5)
 }
 
 selectPost();
