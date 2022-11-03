@@ -8,3 +8,4 @@ venv
 __pycac*
 config.py
 *.sqlite
+push.log
