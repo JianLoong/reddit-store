@@ -1,0 +1,9 @@
+.vscode
+env
+keys.config
+out.json
+programming.sqlite
+reddit.sqlite
+venv
+__pycac*
+config.py
