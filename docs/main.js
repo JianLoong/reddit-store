@@ -355,6 +355,5 @@ const defaultPosts = () => {
     fetchIndexes(yesterday_utc, 5)
 }
 
-location.reload(true);
 selectPost();
 defaultPosts()
