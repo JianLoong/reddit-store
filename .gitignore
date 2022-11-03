@@ -7,3 +7,4 @@ reddit.sqlite
 venv
 __pycac*
 config.py
+*.sqlite
