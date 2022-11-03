@@ -1,0 +1,4 @@
+HOME=/home/pi
+0 */12 * * * /home/pi/reddit-store/env/bin/python /home/pi/reddit-store/subreddit.py
+30 */12 * * * /home/pi/reddit-store/env/bin/python /home/pi/reddit-store/analytics.py
+55 */12 * * * /home/pi/reddit-store/automatic-push.sh
