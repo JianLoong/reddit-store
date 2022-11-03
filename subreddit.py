@@ -15,6 +15,7 @@ import config
 subreddit_name = "AmItheAsshole";
 reddit = None
 db = SqliteDatabase(subreddit_name + '.sqlite')
+UPDATE = False
 
 class BaseModel(Model):
     class Meta:
@@ -65,6 +66,7 @@ def get_submissions():
     display = 1
     for submission in reddit.subreddit(subreddit_name).hot(limit=100):
         print(display)
+        display = display + 1
         submission.comments.replace_more(limit=0)
         # submission.comments.replace_more(limit=None, threshold=0)
         query = Submission.select().where(Submission.submission_id == submission.id)
@@ -78,13 +80,16 @@ def get_submissions():
                 score = submission.score
             )
         else:
+            if UPDATE is False:
+                continue
+            else:
             # print("Updating submission")
-            update_query = Submission.update(title = submission.title, 
-                                                selftext = submission.selftext, 
-                                                created_utc = submission.created_utc, 
-                                                permalink = submission.permalink,
-                                                score = submission.score).where(Submission.submission_id == submission.id)
-            update_query.execute()
+                update_query = Submission.update(title = submission.title, 
+                                                    selftext = submission.selftext, 
+                                                    created_utc = submission.created_utc, 
+                                                    permalink = submission.permalink,
+                                                    score = submission.score).where(Submission.submission_id == submission.id)
+                update_query.execute()
         # Submission.update()
         comments = submission.comments.list()
         for comment in comments:
@@ -97,14 +102,16 @@ def get_submissions():
                                 created_utc = comment.created_utc, 
                                 score = comment.score)
             else:
-                update_query = Comment.update(submission_id = submission.id, 
-                            message = comment.body, 
-                            parent_id = comment.parent_id, 
-                            created_utc = comment.created_utc, 
-                            score = comment.score).where(Comment.comment_id == comment.id)
-                update_query.execute()
-        display = display + 1
-
+                if UPDATE is False:
+                    continue
+                else:
+                    update_query = Comment.update(submission_id = submission.id, 
+                                message = comment.body, 
+                                parent_id = comment.parent_id, 
+                                created_utc = comment.created_utc, 
+                                score = comment.score).where(Comment.comment_id == comment.id)
+                    update_query.execute()
+       
 
 
 def main():

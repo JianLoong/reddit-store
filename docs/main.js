@@ -324,11 +324,11 @@ const defaultPosts = () => {
     let now = new Date();
     let today = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000);
     let yesterday = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000)
-    yesterday.setDate(today.getDate() - 1)
+    yesterday.setDate(today.getDate() - 2)
 
     const yesterday_utc = Date.UTC(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()) / 1000;
 
-    fetchIndexes(yesterday_utc, 5)
+    fetchIndexes(yesterday_utc)
 }
 
 selectPost();
