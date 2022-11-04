@@ -174,7 +174,6 @@ const fetchSubmission = (index) => {
 
     const submissionSentimentDiv = document.getElementById("submissionSentiment");
     const submission = document.getElementById("submission");
-    showLoading("submission", true);
     submissionSentimentDiv.classList.add("d-none");
 
     fetch("./api/submissions/" + index + ".json")
@@ -185,7 +184,6 @@ const fetchSubmission = (index) => {
         })
         .then(data => {
             const json = data;
-            showLoading("submission", false);
             submissionSentimentDiv.classList.remove("d-none");
             buildSubmissions(json);
             processSentiments(index);

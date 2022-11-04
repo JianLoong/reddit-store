@@ -1,6 +1,7 @@
 // Method to fetch the indexes
 const fetchIndexes = (utc, size, order) => {
-
+    showLoading("submissionsLoading", true);
+    document.getElementById("submissions").innerHTML = "";
     if (size > 100) {
         showErrorDiv("submissions", "Cannot retrieve more than 100 post per page")
         return;
@@ -13,6 +14,7 @@ const fetchIndexes = (utc, size, order) => {
             throw new Error("Something went wrong")
         })
         .then(data => {
+            showLoading("submissionsLoading", false);
             const response = data;
             let indexes = response["indexes"];
             let created_utcs = response["created_utcs"];
@@ -29,7 +31,7 @@ const fetchIndexes = (utc, size, order) => {
         })
         .catch(err => {
             console.log(err);
-            showErrorDiv("submissions", "Please try at another time.");
+            // showErrorDiv("submissions", "Please try at another time.");
         });
 }
 
@@ -64,6 +66,7 @@ const showErrorDiv = (id, errorMessage) => {
 }
 
 const fetchSubmission = (index) => {
+    showLoading(index + "_submissionLoading", true);
     fetch("./api/submissions/" + index + ".json")
         .then(response => {
             if (response.ok)
@@ -71,13 +74,14 @@ const fetchSubmission = (index) => {
             throw new Error("Something went wrong");
         })
         .then(data => {
+            showLoading(index + "_submissionLoading", false);
             const json = data;
             buildSubmissions(json);
             processSentiments(index);
         })
         .catch(err => {
             console.log(err);
-            showErrorDiv("submissions", "Please try at another time.")
+            // showErrorDiv("submissions", "Please try at another time.")
         });
 }
 
@@ -88,6 +92,7 @@ const showLoading = (id, isLoading, loadingMessage) => {
     else
         postDiv.classList.remove("spinner-border");
 }
+
 
 const makeHTMLFromString = (str) => {
     let text = str;
@@ -103,9 +108,15 @@ const createDiv = (indexes) => {
     let htmlString = "";
     for (const index of indexes) {
         htmlString += "<div class='card'><div class='card-body'>";
-        htmlString += "<div id =" + index + "></div>";
+        
+        htmlString += "<div id =" + index + "_submissionLoading></div>";
+        htmlString += "<div id =" + index + "_submission></div>";
 
-        htmlString += "<div class='row'>"
+
+
+        htmlString += "<div id =" + index + "_sentimentLoading></div>";
+       
+        htmlString += "<div class='row' class='" + index + "'>"
         htmlString += "<div class='col-md-4'>"
 
         let afinnDivId = index + "_afinn";
@@ -117,8 +128,7 @@ const createDiv = (indexes) => {
         htmlString += "</div>"
 
         htmlString += "<div class='col-md-4'>"
-        
-        htmlString += "<h5 class='card-title'><p class=text-center>" + "Results of NRC Emotion Lexicon Analysis" + "</p></h5>";
+
         let nrc = index + "_nrc";
         htmlString += "<div class='' id =" + nrc + "></div>";
 
@@ -127,7 +137,7 @@ const createDiv = (indexes) => {
         let chart = index + "_chart";
 
         htmlString += "<div class='col-md-4'>"
-        htmlString += "<h5 class='card-title'><p class=text-center>" + "Breakdown of Replies" + "</p></h5>";
+       
         htmlString += "<canvas id='" + chart + "'width='' height='400'></canvas>";
         htmlString += "</div>";
         htmlString += "</div></div></div><p></p>";
@@ -192,8 +202,9 @@ const makeCloud = (id, words) => {
 }
 
 const buildSubmissions = (submission) => {
-    const submissionDiv = document.getElementById(submission.id);
-    htmlString = "<h1 class='card-title'>" + submission.title + "</h1>";
+    const submissionDiv = document.getElementById(submission.id + "_submission");
+    htmlString = "";
+    htmlString += "<h1 class='card-title'>" + submission.title + "</h1>";
     htmlString += "<hr>"
     htmlString += "<small>" + convertDate(submission.created_utc) + "</small>";
     htmlString += "<p></p>"
@@ -209,6 +220,7 @@ const buildSubmissions = (submission) => {
 
 const processSentiments = (id) => {
 
+    showLoading(id + "_sentimentLoading", true);
     fetch("./api/summary/" + id + ".json")
         .then(response => {
             if (response.ok)
@@ -216,6 +228,7 @@ const processSentiments = (id) => {
             throw new Error("Something went wrong")
         })
         .then(data => {
+            showLoading(id + "_sentimentLoading", false);
             const response = data;
             const counts = (response["counts"]);
             const chartLocation = id + "_chart";
@@ -247,7 +260,10 @@ const processNRC = (id, nrc) => {
     tableHTML += "<tr><td>" + "Disgust" + "</td><td>" + nrc.disgust + "</td></tr>";
     tableHTML += "<tr><td>" + "Joy" + "</td><td>" + nrc.joy + "</td></tr>";
     tableHTML += "</tbody></table>"
-    nrcResultsDiv.innerHTML = tableHTML;
+
+    htmlString = "<h5 class='card-title'><p class=text-center>" + "Results of NRC Emotion Lexicon Analysis" + "</p></h5>";
+       
+    nrcResultsDiv.innerHTML = htmlString + tableHTML;
 }
 
 const processAfinn = (id, score) => {
@@ -321,11 +337,12 @@ const selectOrder = () => {
 }
 
 const defaultPosts = () => {
-    let today = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000);
-    let yesterday = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000)
-    yesterday.setDate(today.getDate() - 1)
-    const yesterday_utc = Date.UTC(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()) / 1000;
-    fetchIndexes(yesterday_utc, 5, "hot")
+    //     let today = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000);
+    //     let yesterday = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000)
+    //     yesterday.setDate(today.getDate() - 1)
+    //     const yesterday_utc = Date.UTC(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()) / 1000;
+    const info = getRequiredInformation();
+    fetchIndexes(info[0], info[1], info[2]);
 }
 
 const setupDatePicker = () => {
@@ -333,10 +350,10 @@ const setupDatePicker = () => {
     const today = new Date();
     const formattedToday = today.toISOString().split("T")[0];
     dateControl.value = formattedToday;
-    const minDate = new Date(Date.UTC(2022,10,01));
+    const minDate = new Date(Date.UTC(2022, 10, 01));
     // minDate.setDate(today.getDate() - 3);
     dateControl.setAttribute("max", formattedToday);
-    
+
     dateControl.setAttribute("min", minDate.toISOString().split("T")[0]);
 }
 
@@ -352,8 +369,8 @@ const selectDate = () => {
 const getRequiredInformation = () => {
     const sortOrder = document.getElementById("sortOrder").value;
     const dateControl = document.querySelector('input[type="date"]').value;
-    let today = new Date(dateControl); 
-    let selectedDay = new Date(); 
+    let today = new Date(dateControl);
+    let selectedDay = new Date();
     selectedDay.setDate(today.getDate() - 1);
     const utctime = Date.UTC(selectedDay.getFullYear(), selectedDay.getMonth(), selectedDay.getDate()) / 1000;
     const noOfPost = document.getElementById("numberOfPost").value;
