@@ -97,6 +97,11 @@ const tableRowListener = () => {
             event.stopPropagation();
 
 
+            const searchInputBox = document.getElementById("search");
+
+            searchInputBox.value = "";
+
+
             createSentimentDiv(submissionID);
             fetchSubmission(submissionID);
 
@@ -177,7 +182,7 @@ const processSentiments = (id) => {
 
         })
         .catch(err => {
-            console.log(err);
+
             const submissionSentimentDiv = document.getElementById("submissionSentiment");
             submissionSentimentDiv.innerHTML = "No analytics found for this submission.";
         })
@@ -200,7 +205,7 @@ const fetchSubmission = (index) => {
 
         })
         .catch(err => {
-            console.log(err);
+
             const submission = document.getElementById("submission");
             submission.innerHTML = "No information found for this.";
 
@@ -277,6 +282,7 @@ const searchInput = (searchCorpus) => {
 
         searchResults.innerHTML = htmlString;
 
+        
         tableRowListener();
     });
 }
