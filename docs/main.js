@@ -17,7 +17,7 @@ const fetchIndexes = (utc, size, order) => {
 
             indexes = sortIndexes(indexes, created_utcs, scores);
 
-            console.log(created_utcs);
+            //console.log(created_utcs);
 
             indexes = indexes.slice(0, size);
             // We build empty divs in preparation for the payload
@@ -60,7 +60,7 @@ const sortIndexes = (indexes, created_utc, scores) => {
         })
     }
 
-    console.log("Sorted");
+    //console.log("Sorted");
     return cloned;
 }
 

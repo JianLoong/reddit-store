@@ -169,5 +169,5 @@ def write_to_file(json, file_name):
 if __name__ == '__main__':
     print("Running analytics")
     submissions = get_submissions()
-    print("Processing submissions");
+    print("Processing submissions")
     process(submissions)

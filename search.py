@@ -50,12 +50,11 @@ def get_submissions():
     start_utc = calendar.timegm(start.timetuple())
     yesterday_utc = calendar.timegm(yesterday.timetuple())
     
-    query = Submission.select().where(Submission.created_utc.between(yesterday_utc, start_utc)).order_by(Submission.score.desc())
+    query = Submission.select(Submission.id, Submission.title, Submission.created_utc).order_by(Submission.score.desc())
       
     submissions = list(query.dicts())
     
     indexes = []
-        
         
     sys.stdout.reconfigure(encoding='utf-8')    
     # print(json.dumps(submissions[0]))
@@ -74,4 +73,4 @@ def write_to_file(json, file_name):
 if __name__ == '__main__':
     print("Running analytics")
     submissions = get_submissions()
-    print("Processing submissions");
+    print("Processing submissions")

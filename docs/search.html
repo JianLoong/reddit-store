@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reddit AITA Visualisation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <meta name="google-site-verification" content="UA-55422968-1">
+    <link rel="icon" href="https://jianliew.me/images/favicon.ico">
+    <script async="" src="https://www.google-analytics.com/analytics.js"></script>
+    <script type="application/javascript">var doNotTrack = !1; doNotTrack || (function (e, t, n, s, o, i, a) { e.GoogleAnalyticsObject = o, e[o] = e[o] || function () { (e[o].q = e[o].q || []).push(arguments) }, e[o].l = 1 * new Date, i = t.createElement(n), a = t.getElementsByTagName(n)[0], i.async = 1, i.src = s, a.parentNode.insertBefore(i, a) }(window, document, "script", "https://www.google-analytics.com/analytics.js", "ga"), ga("create", "UA-55422968-1", "auto"), ga("send", "pageview"))
+    </script>
+</head>
+
+
+
+<body class="d-flex flex-column h-100">
+    <main class="flex-shrink-0">
+        <nav class="navbar sticky-top navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="./">Data Visualisation of the subreddit <em>AITA</a>
+            </div>
+        </nav>
+        <div class="container-lg">
+            <h1></em></h1>
+            <hr>
+            <p>Click <a href="https://jianliew.me/projects">here</a> to return to projects page</p>
+
+
+
+
+
+            <div class="row">
+
+                <input class="form-control" id="search" placeholder="Type anything to begin search...">
+            </div>
+
+            <p></p>
+            <div id="resultDiv" class="">
+            <table class="table table-striped" id="resultTable">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Submission</th>
+                      </tr>
+                </thead>
+                <tbody id="searchResults">
+                </tbody>
+              </table>
+            </div>
+
+
+            <div class="" id="submission">
+                <p></p>
+            </div>
+            <div id="submissionSentiment"></div>
+        </div>
+
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+        <script src="./d3.layout.cloud.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+            crossorigin="anonymous"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.6/fuse.min.js"
+            integrity="sha512-FwWaT/y9ajd/+J06KL9Fko1jELonJNHMUTR4nGP9MSIq4ZdU2w9/OiLxn16p/zEOZkryHi3wKYsnWPuADD328Q=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="./search.js"></script>
+    </main>
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container">
+            <span class="text-muted">Project can be found <a href="https://github.com/JianLoong/reddit-store">here</a> .
+                This website updates itself every 12 hours based on data from Reddit</span>
+        </div>
+    </footer>
+</body>
+
+
+<style>
+    
+</style>
+
+</html>
