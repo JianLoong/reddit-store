@@ -92,7 +92,7 @@ const tableRowListener = () => {
 
             const resultDiv = document.getElementById("resultDiv");
             resultDiv.classList.add("d-none");
-            const submissionID = event.target.parentNode.getAttribute("id");
+            const submissionID = event.target.parentNode.parentNode.getAttribute("id");
             event.preventDefault();
             event.stopPropagation();
 
@@ -258,7 +258,11 @@ const searchInput = (searchCorpus) => {
     const fuse = new Fuse(searchCorpus, options);
 
 
-    searchInputBox.addEventListener(("input"), (event) => {
+    searchInputBox.addEventListener(("keypress"), (event) => {
+
+        if(event.key != "Enter")
+            return;
+        event.preventDefault();
 
         const resultDiv = document.getElementById("resultDiv");
 
@@ -266,10 +270,10 @@ const searchInput = (searchCorpus) => {
 
         const submissionDiv = document.getElementById("submission");
         const searchResults = document.getElementById("searchResults");
-        // const submissionSentimentDiv = document.getElementById("submissionSentiment")
+        const submissionSentimentDiv = document.getElementById("submissionSentiment")
 
         submissionDiv.innerHTML = "";
-        // submissionSentimentDiv.innerHTML = "";
+        submissionSentimentDiv.innerHTML = "";
         searchResults.innerHTML = "";
 
 
@@ -284,7 +288,7 @@ const searchInput = (searchCorpus) => {
         for (let result of results) {
             htmlString += "<tr id='" + result["id"] + "' class='searchRow'><td>" + result["id"] + "</td>";
             htmlString += " ";
-            htmlString += "<td class='text-wrap'>" + result["title"] + "</td>"
+            htmlString += "<td class='text-wrap'><a href='#' class='pe-auto'>" + result["title"] + "</a></td>"
             htmlString += "</tr>";
         }
 
