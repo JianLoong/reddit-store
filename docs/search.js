@@ -11,12 +11,12 @@ const fetchSearchIndex = () => {
             searchInput(searchCorpus);
         })
         .catch(err => {
-            
+
         });
 }
 
 const createSentimentDiv = (index) => {
-    
+
     const submissionDiv = document.getElementById("submissionSentiment");
 
     let htmlString = "";
@@ -96,7 +96,7 @@ const tableRowListener = () => {
             event.preventDefault();
             event.stopPropagation();
 
-            
+
             createSentimentDiv(submissionID);
             fetchSubmission(submissionID);
 
@@ -178,7 +178,7 @@ const processSentiments = (id) => {
         })
         .catch(err => {
             console.log(err);
-            const submissionSentimentDiv =  document.getElementById("submissionSentiment");
+            const submissionSentimentDiv = document.getElementById("submissionSentiment");
             submissionSentimentDiv.innerHTML = "No analytics found for this submission.";
         })
 
@@ -187,9 +187,13 @@ const processSentiments = (id) => {
 const fetchSubmission = (index) => {
 
     fetch("./api/submissions/" + index + ".json")
-        .then(response => response.text())
+        .then(response => {
+            if (response.ok)
+                return response.json();
+            throw new Error("Something went wrong")
+        })
         .then(data => {
-            const json = JSON.parse(data);
+            const json = data;
 
             buildSubmissions(json);
             processSentiments(index);
@@ -197,6 +201,13 @@ const fetchSubmission = (index) => {
         })
         .catch(err => {
             console.log(err);
+            const submission = document.getElementById("submission");
+            submission.innerHTML = "No information found for this.";
+
+            const submissionSentimentDiv = document.getElementById("submissionSentiment");
+            submissionSentimentDiv.innerHTML = "No analytics found for this submission.";
+
+
         });
 }
 
