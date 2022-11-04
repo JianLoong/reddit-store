@@ -16,7 +16,7 @@ subreddit_name = "AmItheAsshole";
 reddit = None
 db = SqliteDatabase(subreddit_name + '.sqlite')
 UPDATE = True
-POST_LIMIT = 30
+POST_LIMIT = 50
 
 class BaseModel(Model):
     class Meta:
@@ -164,7 +164,7 @@ def create_warehouse():
             replies.append(reply["message"])
         submissions[index]["replies"] = replies
         # This is the summary of the submission
-        # write_to_file(json.dumps(submissions[index]), "./submissions/" + str(_submission_pk))
+        write_to_file(json.dumps(submissions[index]), "./submissions/" + str(_submission_pk))
     
     # print(json.dumps(submissions[0]))
     
