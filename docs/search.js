@@ -360,15 +360,4 @@ const makeCloud = (id, words) => {
 
 }
 
-const setupDatePicker = () => {
-    const dateControl = document.querySelector('input[type="date"]');
-    const today = new Date();
-    const formattedToday = today.toISOString().split("T")[0];
-    dateControl.value = formattedToday;
-    // console.log(dateControl.value); // prints "2017-06-01"
-    // console.log(dateControl.valueAsNumber); // prints 1496275200000, a JavaScript timestamp (ms)
-    dateControl.max(formattedToday);
-}
-
-setupDatePicker();
 fetchSearchIndex();

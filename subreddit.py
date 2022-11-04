@@ -128,7 +128,7 @@ def create_warehouse():
 
     # This does not need to be date aware
     today = datetime.today()
-    start = datetime(today.year, today.month, today.day)
+    start = datetime(today.year, today.month, today.day) - timedelta(1)
     yesterday = start - timedelta(1)
     
     # Convert time to UTC time
@@ -164,7 +164,7 @@ def create_warehouse():
             replies.append(reply["message"])
         submissions[index]["replies"] = replies
         # This is the summary of the submission
-        write_to_file(json.dumps(submissions[index]), "./submissions/" + str(_submission_pk))
+        # write_to_file(json.dumps(submissions[index]), "./submissions/" + str(_submission_pk))
     
     # print(json.dumps(submissions[0]))
     
@@ -183,7 +183,7 @@ def write_to_file(json, file_name):
     f.close()
         
 if __name__ == '__main__':
-    get_submissions()
+    # get_submissions()
     create_warehouse()
     # main()
 

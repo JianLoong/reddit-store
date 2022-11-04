@@ -6,11 +6,6 @@ const fetchIndexes = (utc, size, order) => {
         return;
     }
 
-    showLoading("submissions", true);
-
-    url = utc.toString() + ".json";
-
-    console.log(url);
     fetch("./api/indexes/" + utc + ".json")
         .then(response => {
             if (response.ok)
@@ -23,21 +18,20 @@ const fetchIndexes = (utc, size, order) => {
             let created_utcs = response["created_utcs"];
             let scores = response["scores"];
 
-            indexes = sortIndexes(indexes, created_utcs, scores);
+            sortedIndexes = sortIndexes(indexes, created_utcs, scores);
 
-            //console.log(created_utcs);
 
-            indexes = indexes.slice(0, size);
+            sortedIndexes = sortedIndexes.slice(0, size);
             // We build empty divs in preparation for the payload
-            createDiv(indexes);
+            createDiv(sortedIndexes);
             // We can now fetch the submissions
-            for (let index of indexes)
+            for (let index of sortedIndexes)
                 fetchSubmission(index);
-            showLoading("submissions", false);
+
         })
         .catch(err => {
             console.log(err);
-            showLoading("submissions", false);
+
             showErrorDiv("submissions", "Please try at another time.");
         });
 }
@@ -45,10 +39,8 @@ const fetchIndexes = (utc, size, order) => {
 
 const sortIndexes = (indexes, created_utc, scores) => {
     // Clone the array so that other things dont die
-
     const sortOrder = document.getElementById("sortOrder");
     let cloned = [...indexes];
-
     if (sortOrder.value == "newest") {
 
         cloned.sort((a, b) => {
@@ -57,8 +49,15 @@ const sortIndexes = (indexes, created_utc, scores) => {
 
             return x - y;
         })
+    } else {
+
+        cloned.sort((a, b) => {
+            let x = created_utc[indexes.indexOf(a)];
+            let y = created_utc[indexes.indexOf(b)];
+
+            return y - x;
+        })
     }
-    //console.log("Sorted");
     return cloned;
 }
 
@@ -75,19 +74,22 @@ const showErrorDiv = (id, errorMessage) => {
 
 const fetchSubmission = (index) => {
 
-    showLoading(index, true);
     fetch("./api/submissions/" + index + ".json")
-        .then(response => response.text())
+        .then(response => {
+            if (response.ok)
+                return response.json();
+            throw new Error("Something went wrong")
+        })
         .then(data => {
-            const json = JSON.parse(data);
+            const json = data;
             // We should get all lexicons before building submissions.
-            showLoading(index, false);
+
             buildSubmissions(json);
             processSentiments(index);
         })
         .catch(err => {
             console.log(err);
-            showLoading("submissions", false);
+
             showErrorDiv("submissions", "Please try at another time.")
         });
 }
@@ -143,14 +145,10 @@ const createDiv = (indexes) => {
         // htmlString += "<div class='col-6'>"
         // let chart = index + "_chart";
         // htmlString += "<div class='' id =" + chart + "></div>";
-
         // htmlString += "</div>";
-
         htmlString += "</div></div></div><p></p>";
     }
-
     submissionsDiv.innerHTML = htmlString;
-
 }
 
 const makeCloud = (id, words) => {
@@ -158,7 +156,6 @@ const makeCloud = (id, words) => {
 
     let cloudId = document.getElementById(id + "_cloud");
 
-    // Get all keys
     words = Object.keys(words);
 
     let keys = Object.keys(words);
@@ -214,7 +211,6 @@ const makeCloud = (id, words) => {
 
 }
 
-
 const buildSubmissions = (submission) => {
     const submissionDiv = document.getElementById(submission.id);
     htmlString = "<h1 class='card-title'>" + submission.title + "</h1>";
@@ -246,14 +242,16 @@ const buildSubmissions = (submission) => {
 
 const processSentiments = (id) => {
 
-
-    showLoading(id + "_afinn", true);
     fetch("./api/summary/" + id + ".json")
-        .then(response => response.text())
+        .then(response => {
+            if (response.ok)
+                return response.json();
+            throw new Error("Something went wrong")
+        })
         .then(data => {
-            showLoading(id + "_afinn", false);
 
-            const response = JSON.parse(data);
+
+            const response = data;
 
             const counts = (response["counts"]);
 
@@ -275,7 +273,6 @@ const processSentiments = (id) => {
         });
 
 }
-
 
 const processNRC = (id, nrc) => {
     const location = id + "_nrc";
@@ -299,11 +296,8 @@ const processNRC = (id, nrc) => {
 
 const processAfinn = (id, score) => {
 
-
     const location = id + "_afinn";
-
     let afinnResultsDiv = document.getElementById(location);
-
 
     if (score < 0) {
         afinnResultsDiv.innerHTML = '<div class="alert alert-warning" role="alert">Negative</div>';
@@ -327,7 +321,6 @@ const convertDate = (dateInUTC) => {
     displayTime = event.toDateString() + " " + event.toTimeString();
     return displayTime;
 }
-
 
 const buildChart = (id, dataArr) => {
     const ctx = document.getElementById(id).getContext("2d");
@@ -362,54 +355,26 @@ const buildChart = (id, dataArr) => {
 };
 
 const selectPost = () => {
-
-    let now = new Date();
-    let today = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000);
-    let yesterday = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000)
-    yesterday.setDate(today.getDate() - 1)
-
-    const yesterday_utc = Date.UTC(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()) / 1000;
-
     const noOfPost = document.getElementById("numberOfPost");
-    const sortOrder = document.getElementById("sortOrder").value;
-
     noOfPost.addEventListener("change", (event) => {
-        submissionDiv = document.getElementById("submissions");
-        submissionDiv.innerHTML = "";
-        fetchIndexes(yesterday_utc, event.target.value, sortOrder);
+        let info = getRequiredInformation();
+        fetchIndexes(info[0], info[1], info[2]);
     })
-
 }
 
 const selectOrder = () => {
-    const sortOrder = document.getElementById("sortOrder");
-
-    let today = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000);
-
-    let yesterday = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000)
-    yesterday.setDate(today.getDate() - 1);
-
-    const yesterday_utc = Date.UTC(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()) / 1000;
-
-
-    const noOfPost = document.getElementById("numberOfPost").value;
-
     sortOrder.addEventListener("change", (event) => {
-        submissionDiv = document.getElementById("submissions");
-        submissionDiv.innerHTML = "";
-        fetchIndexes(yesterday_utc, noOfPost, event.target.value);
+        let info = getRequiredInformation();
+        fetchIndexes(info[0], info[1], info[2]);
     })
 }
 
 const defaultPosts = () => {
 
-    let now = new Date();
     let today = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000);
     let yesterday = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000)
     yesterday.setDate(today.getDate() - 1)
-
     const yesterday_utc = Date.UTC(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()) / 1000;
-
     fetchIndexes(yesterday_utc, 5, "hot")
 }
 
@@ -418,13 +383,12 @@ const setupDatePicker = () => {
     const today = new Date();
     const formattedToday = today.toISOString().split("T")[0];
     dateControl.value = formattedToday;
-    // console.log(dateControl.value); // prints "2017-06-01"
-    // console.log(dateControl.valueAsNumber); // prints 1496275200000, a JavaScript timestamp (ms)
     const minDate = new Date();
     minDate.setDate(today.getDate() - 3);
     dateControl.setAttribute("max", formattedToday);
     dateControl.setAttribute("min", minDate.toISOString().split("T")[0]);
 }
+
 
 const selectDate = () => {
     const dateInput = document.querySelector('input[type="date"]');
@@ -432,20 +396,22 @@ const selectDate = () => {
     console.log(dateInput.value);
 
     dateInput.addEventListener("input", (event) => {
-        //console.log(event.target.value);
-        //Convert to unix time stamp
-
-        //const unixTime = new Date(event.target.value);
-        const today = new Date(event.target.value);
-        today.setDate(today.getDate() - 1);
-        const unixTime = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) / 1000;
-        console.log(unixTime);
-
-        const noOfPost = document.getElementById("numberOfPost").value;
-        const sortOrder = document.getElementById("sortOrder").value;
-        fetchIndexes(unixTime, noOfPost, sortOrder);
-
+        let info = getRequiredInformation();
+        fetchIndexes(info[0], info[1], info[2]);
     })
+}
+
+// This method returns the date in unix time, the number of post and sorting order.
+const getRequiredInformation = () => {
+
+    const sortOrder = document.getElementById("sortOrder").value;
+    const dateControl = document.querySelector('input[type="date"]').value;
+    let today = new Date(dateControl); 
+    let selectedDay = new Date(); 
+    selectedDay.setDate(today.getDate() - 1);
+    const utctime = Date.UTC(selectedDay.getFullYear(), selectedDay.getMonth(), selectedDay.getDate()) / 1000;
+    const noOfPost = document.getElementById("numberOfPost").value;
+    return [utctime, noOfPost, sortOrder];
 }
 
 
