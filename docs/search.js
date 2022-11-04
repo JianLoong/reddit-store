@@ -191,6 +191,14 @@ const processSentiments = (id) => {
 
 const fetchSubmission = (index) => {
 
+    const submissionSentimentDiv = document.getElementById("submissionSentiment");
+    const submission = document.getElementById("submission");
+
+    showLoading("submission", true);
+
+    submissionSentimentDiv.classList.add("d-none");
+
+
     fetch("./api/submissions/" + index + ".json")
         .then(response => {
             if (response.ok)
@@ -200,16 +208,16 @@ const fetchSubmission = (index) => {
         .then(data => {
             const json = data;
 
+            showLoading("submission", false);
+            submissionSentimentDiv.classList.remove("d-none");
             buildSubmissions(json);
             processSentiments(index);
 
         })
         .catch(err => {
 
-            const submission = document.getElementById("submission");
             submission.innerHTML = "No information found for this.";
 
-            const submissionSentimentDiv = document.getElementById("submissionSentiment");
             submissionSentimentDiv.innerHTML = "No analytics found for this submission.";
 
 
@@ -258,11 +266,11 @@ const searchInput = (searchCorpus) => {
 
         const submissionDiv = document.getElementById("submission");
         const searchResults = document.getElementById("searchResults");
-        const submissionSentimentDiv = document.getElementById("submissionSentiment")
+        // const submissionSentimentDiv = document.getElementById("submissionSentiment")
 
         submissionDiv.innerHTML = "";
-        submissionSentimentDiv.innerHTML = "";
-        // searchResults.innerHTML = "";
+        // submissionSentimentDiv.innerHTML = "";
+        searchResults.innerHTML = "";
 
 
         const searchQuery = event.target.value;
