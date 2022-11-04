@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="h-100">
 
 <head>
     <meta charset="utf-8">
@@ -14,69 +14,74 @@
     </script>
 </head>
 
-<body class="">
-    <nav class="navbar sticky-top navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Data Visualisation of the subreddit <em>AITA</em></a>
-        </div>
-    </nav>
-    <div class="container-lg">
-        <h1></h1>
-        <hr>
-        <p>Click <a href="https://jianliew.me/projects">here</a> to return to projects page</p>
-        <p>
-            The subreddit describes itself as…
-        <p>
-            <em>
-                A catharsis for the frustrated moral philosopher in all of us, and a place to finally find out if you
-                were wrong in an
-                argument that’s been bothering you. Tell us about any non-violent conflict you have experienced; give us
-                both sides of the
-                story, and find out if you’re right, or you’re the asshole. See our Best Of “Most Controversial” at
-                /r/AITAFiltered!
-            </em>
-        <p>For more information please visit the project page <a href="http://github.com/JianLoong/reddit-store">here</a>
-        </p>
+<body class="d-flex flex-column h-100">
+    <main class="flex-shrink-0">
+        <nav class="navbar sticky-top navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Data Visualisation of the subreddit <em>AITA</em></a>
+            </div>
+        </nav>
+        <div class="container-lg">
+            <h1></h1>
+            <hr>
+            <p>Click <a href="https://jianliew.me/projects">here</a> to return to projects page</p>
+            <p>
+                The subreddit describes itself as…
+            <p>
+                <em>
+                    A catharsis for the frustrated moral philosopher in all of us, and a place to finally find out if
+                    you
+                    were wrong in an
+                    argument that’s been bothering you. Tell us about any non-violent conflict you have experienced;
+                    give us
+                    both sides of the
+                    story, and find out if you’re right, or you’re the asshole. See our Best Of “Most Controversial” at
+                    /r/AITAFiltered!
+                </em>
+            <p>For more information please visit the project page <a
+                    href="http://github.com/JianLoong/reddit-store">here</a>
+            </p>
 
-        <p>You can also search the submissions using <a href="./search">this</a>
-        </p>
-        </p>
+            <p>You can also search the submissions using <a href="./search">this</a>
+            </p>
+            </p>
 
 
-        <div class="row g-3">
-            <label for="colFormLabelLg" class="col-auto col-form-label">No of Post: </label>
-            <div class="col-auto">
-                <select class="form-select" aria-label="Number of post" id="numberOfPost">
-                    <option value="5" selected>5</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="20">100</option>
-                </select>
+            <div class="row g-3">
+                <label for="colFormLabelLg" class="col-auto col-form-label">No of Post: </label>
+                <div class="col-auto">
+                    <select class="form-select" aria-label="Number of post" id="numberOfPost">
+                        <option value="5" selected>5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="20">100</option>
+                    </select>
+                </div>
+
+                <label for="colFormLabelLg" class="col-auto col-form-label">Sort</label>
+                <div class="col-auto">
+                    <select class="form-select" aria-label="Number of post" id="sortOrder">
+                        <option value="hot" selected>hot</option>
+                        <option value="newest">newest</option>
+                    </select>
+                </div>
             </div>
 
-            <label for="colFormLabelLg" class="col-auto col-form-label">Sort</label>
-            <div class="col-auto">
-                <select class="form-select" aria-label="Number of post" id="sortOrder">
-                    <option value="hot" selected>hot</option>
-                    <option value="newest">newest</option>
-                </select>
-            </div>
-        </div>
-
-        <p></p>
-
-        <div class="row g-3">
-
-        </div>
-
-        <div class="">
             <p></p>
+
+            <div class="row g-3">
+
+            </div>
+
             <div class="">
-                <div id="submissions">
+                <p></p>
+                <div class="">
+                    <div id="submissions">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <footer class="footer mt-auto py-3 bg-light">
         <div class="container">
@@ -85,7 +90,7 @@
         </div>
     </footer>
 
-   
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
@@ -97,6 +102,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="./main.js"></script>
+
 </body>
 
 </html>
