@@ -128,7 +128,7 @@ def create_warehouse():
 
     # This does not need to be date aware
     today = datetime.today()
-    start = datetime(today.year, today.month, today.day) - timedelta(1)
+    start = datetime(today.year, today.month, today.day)
     yesterday = start - timedelta(1)
     
     # Convert time to UTC time
@@ -183,7 +183,7 @@ def write_to_file(json, file_name):
     f.close()
         
 if __name__ == '__main__':
-    get_submissions()
+    # get_submissions()
     create_warehouse()
     # main()
 
