@@ -5,13 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Reddit AITA Visualisation</title>
-    <link href="https://fonts.cdnfonts.com/css/atkinson-hyperlegible" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <link href="./site.css" rel="stylesheet">
     <meta name="google-site-verification" content="UA-55422968-1">
     <link rel="icon" href="https://jianliew.me/images/favicon.ico">
     <script async="" src="https://www.google-analytics.com/analytics.js"></script>
+
     <script type="application/javascript">var doNotTrack = !1; doNotTrack || (function (e, t, n, s, o, i, a) { e.GoogleAnalyticsObject = o, e[o] = e[o] || function () { (e[o].q = e[o].q || []).push(arguments) }, e[o].l = 1 * new Date, i = t.createElement(n), a = t.getElementsByTagName(n)[0], i.async = 1, i.src = s, a.parentNode.insertBefore(i, a) }(window, document, "script", "https://www.google-analytics.com/analytics.js", "ga"), ga("create", "UA-55422968-1", "auto"), ga("send", "pageview"))
     </script>
 </head>
@@ -66,6 +66,11 @@
                         <option value="hot" selected>hot</option>
                         <option value="newest">newest</option>
                     </select>
+                </div>
+
+                <label for="colFormLabelLg" class="col-auto col-form-label">Date: </label>
+                <div class="col-auto">
+                    <input type="date" class="form-control" id="date" name="date" aria-label="date" aria-describedby="date" required pattern="\d{4}-\d{2}-\d{2}" hidden>
                 </div>
             </div>
 

@@ -7,10 +7,18 @@ const fetchIndexes = (utc, size, order) => {
     }
 
     showLoading("submissions", true);
+
+    url = utc.toString() + ".json";
+
+    console.log(url);
     fetch("./api/indexes/" + utc + ".json")
-        .then(response => response.text())
+        .then(response => {
+            if (response.ok)
+                return response.json();
+            throw new Error("Something went wrong")
+        })
         .then(data => {
-            const response = JSON.parse(data);
+            const response = data;
             let indexes = response["indexes"];
             let created_utcs = response["created_utcs"];
             let scores = response["scores"];
@@ -42,7 +50,7 @@ const sortIndexes = (indexes, created_utc, scores) => {
     let cloned = [...indexes];
 
     if (sortOrder.value == "newest") {
-        
+
         cloned.sort((a, b) => {
             let x = created_utc[indexes.indexOf(a)];
             let y = created_utc[indexes.indexOf(b)];
@@ -50,16 +58,6 @@ const sortIndexes = (indexes, created_utc, scores) => {
             return x - y;
         })
     }
-    else {
-       
-        cloned.sort((a, b) => {
-            let x = scores[indexes.indexOf(a)];
-            let y = scores[indexes.indexOf(b)];
-
-            return y - x;
-        })
-    }
-
     //console.log("Sorted");
     return cloned;
 }
@@ -119,7 +117,7 @@ const createDiv = (indexes) => {
         htmlString += "<div id =" + index + "></div>";
 
         htmlString += "<div class='row'>"
-        htmlString += "<div class='col-lg-4'>"
+        htmlString += "<div class='col-md-4'>"
 
         let afinnDivId = index + "_afinn";
         htmlString += "<div class='' id =" + afinnDivId + " +></div>";
@@ -129,7 +127,7 @@ const createDiv = (indexes) => {
 
         htmlString += "</div>"
 
-        htmlString += "<div class='col-lg-4'>"
+        htmlString += "<div class='col-md-4'>"
         let nrc = index + "_nrc";
         htmlString += "<div class='' id =" + nrc + "></div>";
 
@@ -137,7 +135,7 @@ const createDiv = (indexes) => {
 
         let chart = index + "_chart";
 
-        htmlString += "<div class='col-lg-4'>"
+        htmlString += "<div class='col-md-4'>"
         // htmlString += "<h5 class='card-title'><p class=text-center>" + "Breakdown of Replies" + "</p></h5>";
         htmlString += "<canvas id='" + chart + "'width='' height='400'></canvas>";
         htmlString += "</div>";
@@ -387,7 +385,7 @@ const selectOrder = () => {
     const sortOrder = document.getElementById("sortOrder");
 
     let today = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000);
-    
+
     let yesterday = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000)
     yesterday.setDate(today.getDate() - 1);
 
@@ -415,6 +413,44 @@ const defaultPosts = () => {
     fetchIndexes(yesterday_utc, 5, "hot")
 }
 
+const setupDatePicker = () => {
+    const dateControl = document.querySelector('input[type="date"]');
+    const today = new Date();
+    const formattedToday = today.toISOString().split("T")[0];
+    dateControl.value = formattedToday;
+    // console.log(dateControl.value); // prints "2017-06-01"
+    // console.log(dateControl.valueAsNumber); // prints 1496275200000, a JavaScript timestamp (ms)
+    const minDate = new Date();
+    minDate.setDate(today.getDate() - 3);
+    dateControl.setAttribute("max", formattedToday);
+    dateControl.setAttribute("min", minDate.toISOString().split("T")[0]);
+}
+
+const selectDate = () => {
+    const dateInput = document.querySelector('input[type="date"]');
+
+    console.log(dateInput.value);
+
+    dateInput.addEventListener("input", (event) => {
+        //console.log(event.target.value);
+        //Convert to unix time stamp
+
+        //const unixTime = new Date(event.target.value);
+        const today = new Date(event.target.value);
+        today.setDate(today.getDate() - 1);
+        const unixTime = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) / 1000;
+        console.log(unixTime);
+
+        const noOfPost = document.getElementById("numberOfPost").value;
+        const sortOrder = document.getElementById("sortOrder").value;
+        fetchIndexes(unixTime, noOfPost, sortOrder);
+
+    })
+}
+
+
+setupDatePicker();
+selectDate();
 selectPost();
 defaultPosts()
 selectOrder();
