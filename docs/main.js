@@ -19,8 +19,6 @@ const fetchIndexes = (utc, size, order) => {
             let scores = response["scores"];
 
             sortedIndexes = sortIndexes(indexes, created_utcs, scores);
-
-
             sortedIndexes = sortedIndexes.slice(0, size);
             // We build empty divs in preparation for the payload
             createDiv(sortedIndexes);
@@ -392,9 +390,6 @@ const setupDatePicker = () => {
 
 const selectDate = () => {
     const dateInput = document.querySelector('input[type="date"]');
-
-    console.log(dateInput.value);
-
     dateInput.addEventListener("input", (event) => {
         let info = getRequiredInformation();
         fetchIndexes(info[0], info[1], info[2]);
