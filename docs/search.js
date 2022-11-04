@@ -11,28 +11,23 @@ const fetchSearchIndex = () => {
             searchInput(searchCorpus);
         })
         .catch(err => {
-
+            showErrorDiv("submission", "Sorry, something went wrong...")
         });
 }
 
 const createSentimentDiv = (index) => {
 
     const submissionDiv = document.getElementById("submissionSentiment");
-
     let htmlString = "";
-
     htmlString += "<div class='card'><div class='card-body'>";
     htmlString += "<div id =" + index + "></div>";
-
     htmlString += "<div class='row'>"
     htmlString += "<div class='col-lg-4'>"
-
     let afinnDivId = index + "_afinn";
     htmlString += "<div class='' id =" + afinnDivId + " +></div>";
 
     let cloudId = index + "_cloud";
     htmlString += "<div id='" + cloudId + "'></div>";
-
     htmlString += "</div>"
 
     htmlString += "<div class='col-lg-4'>"
@@ -50,7 +45,6 @@ const createSentimentDiv = (index) => {
 
 
     htmlString += "</div></div></div><p></p>";
-
 
     submissionDiv.innerHTML = htmlString;
 
@@ -86,28 +80,19 @@ const showLoading = (id, isLoading, loadingMessage) => {
 
 const tableRowListener = () => {
     const rows = document.querySelectorAll(".searchRow");
-
     rows.forEach((e) => {
         e.addEventListener(("click"), (event) => {
-
             const resultDiv = document.getElementById("resultDiv");
             resultDiv.classList.add("d-none");
             const submissionID = event.target.parentNode.parentNode.getAttribute("id");
             event.preventDefault();
             event.stopPropagation();
-
-
             const searchInputBox = document.getElementById("search");
-
             searchInputBox.value = "";
-
-
             createSentimentDiv(submissionID);
             fetchSubmission(submissionID);
-
         })
     })
-
 }
 
 const convertDate = (dateInUTC) => {
@@ -157,6 +142,7 @@ const buildChart = (id, dataArr) => {
     });
 
 };
+
 const processSentiments = (id) => {
 
     fetch("./api/summary/" + id + ".json")
@@ -167,22 +153,17 @@ const processSentiments = (id) => {
         })
         .then(data => {
 
-
             const response = data;
             const counts = (response["counts"]);
             const chartLocation = id + "_chart";
             const chart_data = [counts.nta_count, counts.yta_count, counts.esh, counts.nah_count, counts.info_count]
 
             buildChart(chartLocation, chart_data);
-
             processNRC(id, response["emotion"]);
-
-            // processAfinn(id, response["afinn"])
             makeCloud(id, response["word_freq"]);
 
         })
         .catch(err => {
-
             const submissionSentimentDiv = document.getElementById("submissionSentiment");
             submissionSentimentDiv.innerHTML = "No analytics found for this submission.";
         })
@@ -193,11 +174,8 @@ const fetchSubmission = (index) => {
 
     const submissionSentimentDiv = document.getElementById("submissionSentiment");
     const submission = document.getElementById("submission");
-
     showLoading("submission", true);
-
     submissionSentimentDiv.classList.add("d-none");
-
 
     fetch("./api/submissions/" + index + ".json")
         .then(response => {
@@ -207,7 +185,6 @@ const fetchSubmission = (index) => {
         })
         .then(data => {
             const json = data;
-
             showLoading("submission", false);
             submissionSentimentDiv.classList.remove("d-none");
             buildSubmissions(json);
@@ -215,12 +192,8 @@ const fetchSubmission = (index) => {
 
         })
         .catch(err => {
-
             submission.innerHTML = "No information found for this.";
-
             submissionSentimentDiv.innerHTML = "No analytics found for this submission.";
-
-
         });
 }
 
@@ -232,13 +205,10 @@ const buildSubmissions = (submission) => {
     htmlString += "<p></p>"
     htmlString += "" + makeHTMLFromString(submission.selftext) + "";
 
-
-
     let link = "https://reddit.com/" + submission.permalink;
 
     htmlString +=
         "<p>View original post <a href='" + link + "' class='card-link'>here</a></p>";
-
     htmlString += "<p>Number of replies <strong>" + submission.replies.length + "</strong></p>";
 
     submissionDiv.innerHTML = htmlString;
@@ -247,7 +217,6 @@ const buildSubmissions = (submission) => {
 const searchInput = (searchCorpus) => {
 
     const searchInputBox = document.getElementById("search");
-
     const options = {
         keys: [
             "id",
@@ -256,10 +225,7 @@ const searchInput = (searchCorpus) => {
     };
 
     const fuse = new Fuse(searchCorpus, options);
-
-
     searchInputBox.addEventListener(("keypress"), (event) => {
-
         if (event.key != "Enter")
             return;
         event.preventDefault();
@@ -276,15 +242,10 @@ const searchInput = (searchCorpus) => {
         submissionSentimentDiv.innerHTML = "";
         searchResults.innerHTML = "";
 
-
         const searchQuery = event.target.value;
-
         const results = fuse.search(searchQuery);
 
-        //console.log(results);
-
         htmlString = "";
-
         for (let result of results) {
             htmlString += "<tr id='" + result["id"] + "' class='searchRow'><td>" + result["id"] + "</td>";
             htmlString += " ";
@@ -293,8 +254,6 @@ const searchInput = (searchCorpus) => {
         }
 
         searchResults.innerHTML = htmlString;
-
-
         tableRowListener();
     });
 }
@@ -309,9 +268,7 @@ const makeCloud = (id, words) => {
 
     let keys = Object.keys(words);
     let values = Object.values(words);
-
     let processedWords = [];
-
     let sum = 0;
 
     for (let i = 0; i < keys.length; i++) {
@@ -324,8 +281,6 @@ const makeCloud = (id, words) => {
 
     // console.log(cloudId);
     const width = document.getElementById(id + "_cloud").getBoundingClientRect().width;
-
-    // console.log(computedWidth);
 
     const draw = (words) => {
         d3.select(cloudId).append("svg")

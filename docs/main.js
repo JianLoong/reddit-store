@@ -2,7 +2,7 @@
 const fetchIndexes = (utc, size, order) => {
 
     if (size > 100) {
-        showErrorDiv("submissions", "Cannot retrieve mroe than 100 post per page")
+        showErrorDiv("submissions", "Cannot retrieve more than 100 post per page")
         return;
     }
 
@@ -29,7 +29,6 @@ const fetchIndexes = (utc, size, order) => {
         })
         .catch(err => {
             console.log(err);
-
             showErrorDiv("submissions", "Please try at another time.");
         });
 }
@@ -40,15 +39,12 @@ const sortIndexes = (indexes, created_utc, scores) => {
     const sortOrder = document.getElementById("sortOrder");
     let cloned = [...indexes];
     if (sortOrder.value == "newest") {
-
         cloned.sort((a, b) => {
             let x = created_utc[indexes.indexOf(a)];
             let y = created_utc[indexes.indexOf(b)];
-
             return x - y;
         })
     } else {
-
         cloned.sort((a, b) => {
             let x = created_utc[indexes.indexOf(a)];
             let y = created_utc[indexes.indexOf(b)];
@@ -60,34 +56,27 @@ const sortIndexes = (indexes, created_utc, scores) => {
 }
 
 const showErrorDiv = (id, errorMessage) => {
-
     errorDiv = document.getElementById(id);
-
     htmlString = '<div class="alert alert-warning" role="alert">';
     htmlString += errorMessage;
     htmlString += '</div >'
-
     errorDiv.innerHTML = htmlString;
 }
 
 const fetchSubmission = (index) => {
-
     fetch("./api/submissions/" + index + ".json")
         .then(response => {
             if (response.ok)
                 return response.json();
-            throw new Error("Something went wrong")
+            throw new Error("Something went wrong");
         })
         .then(data => {
             const json = data;
-            // We should get all lexicons before building submissions.
-
             buildSubmissions(json);
             processSentiments(index);
         })
         .catch(err => {
             console.log(err);
-
             showErrorDiv("submissions", "Please try at another time.")
         });
 }
@@ -128,6 +117,8 @@ const createDiv = (indexes) => {
         htmlString += "</div>"
 
         htmlString += "<div class='col-md-4'>"
+        
+        htmlString += "<h5 class='card-title'><p class=text-center>" + "Results of NRC Emotion Lexicon Analysis" + "</p></h5>";
         let nrc = index + "_nrc";
         htmlString += "<div class='' id =" + nrc + "></div>";
 
@@ -136,14 +127,9 @@ const createDiv = (indexes) => {
         let chart = index + "_chart";
 
         htmlString += "<div class='col-md-4'>"
-        // htmlString += "<h5 class='card-title'><p class=text-center>" + "Breakdown of Replies" + "</p></h5>";
+        htmlString += "<h5 class='card-title'><p class=text-center>" + "Breakdown of Replies" + "</p></h5>";
         htmlString += "<canvas id='" + chart + "'width='' height='400'></canvas>";
         htmlString += "</div>";
-
-        // htmlString += "<div class='col-6'>"
-        // let chart = index + "_chart";
-        // htmlString += "<div class='' id =" + chart + "></div>";
-        // htmlString += "</div>";
         htmlString += "</div></div></div><p></p>";
     }
     submissionsDiv.innerHTML = htmlString;
@@ -151,11 +137,9 @@ const createDiv = (indexes) => {
 
 const makeCloud = (id, words) => {
     htmlString = "";
-
     let cloudId = document.getElementById(id + "_cloud");
 
     words = Object.keys(words);
-
     let keys = Object.keys(words);
     let values = Object.values(words);
 
@@ -171,10 +155,8 @@ const makeCloud = (id, words) => {
         sum += values;
     }
 
-    // console.log(cloudId);
+    // This computed width is used to draw the cloud so that the size is right.
     const width = document.getElementById(id + "_cloud").getBoundingClientRect().width;
-
-    // console.log(computedWidth);
 
     const draw = (words) => {
         d3.select(cloudId).append("svg")
@@ -217,25 +199,12 @@ const buildSubmissions = (submission) => {
     htmlString += "<p></p>"
     htmlString += "" + makeHTMLFromString(submission.selftext) + "";
 
-
-
     let link = "https://reddit.com/" + submission.permalink;
 
     htmlString +=
         "<p>View original post <a href='" + link + "' class='card-link'>here</a></p>";
-
     htmlString += "<p>Number of replies <strong>" + submission.replies.length + "</strong></p>";
-    // replyString = JSON.stringify(submission.replies);
-
-
-    // processAfinn(submission.id, submission.selftext);
-    // processNRC(submission.id, submission.selftext);
-    // processAfinn(submission.id, replyString);
-    // processNRC(submission.id, replyString);
-    // processCounts(submission.id, replyString);
     submissionDiv.innerHTML = htmlString;
-    // processSentiments(submission.id);
-    // makeCloud(submission.id);
 }
 
 const processSentiments = (id) => {
@@ -247,24 +216,13 @@ const processSentiments = (id) => {
             throw new Error("Something went wrong")
         })
         .then(data => {
-
-
             const response = data;
-
             const counts = (response["counts"]);
-
             const chartLocation = id + "_chart";
-
-
             const chart_data = [counts.nta_count, counts.yta_count, counts.esh, counts.nah_count, counts.info_count]
-
             buildChart(chartLocation, chart_data);
-
             processNRC(id, response["emotion"]);
-
-            // processAfinn(id, response["afinn"])
             makeCloud(id, response["word_freq"]);
-
         })
         .catch(err => {
             console.log(err);
@@ -293,10 +251,8 @@ const processNRC = (id, nrc) => {
 }
 
 const processAfinn = (id, score) => {
-
     const location = id + "_afinn";
     let afinnResultsDiv = document.getElementById(location);
-
     if (score < 0) {
         afinnResultsDiv.innerHTML = '<div class="alert alert-warning" role="alert">Negative</div>';
     }
@@ -304,13 +260,10 @@ const processAfinn = (id, score) => {
     if (score == 0) {
         afinnResultsDiv.innerHTML = '<div class="alert alert-info" role="alert">Neutral</div>';
     }
-
     if (score > 0) {
         afinnResultsDiv.innerHTML = '<div class="alert alert-success" role="alert">Positive</div>';
     }
-
     let tableHTML = '<table class="result-table table table-bordered table-striped mb-0"><thead><tr><th>Score</th></thead>';
-
     afinnResultsDiv.innerHTML += tableHTML + "<tr><td>" + score + "</td></tr></table>";;
 }
 
@@ -368,7 +321,6 @@ const selectOrder = () => {
 }
 
 const defaultPosts = () => {
-
     let today = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000);
     let yesterday = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000)
     yesterday.setDate(today.getDate() - 1)
@@ -381,12 +333,12 @@ const setupDatePicker = () => {
     const today = new Date();
     const formattedToday = today.toISOString().split("T")[0];
     dateControl.value = formattedToday;
-    const minDate = new Date();
-    minDate.setDate(today.getDate() - 3);
+    const minDate = new Date(Date.UTC(2022,10,01));
+    // minDate.setDate(today.getDate() - 3);
     dateControl.setAttribute("max", formattedToday);
+    
     dateControl.setAttribute("min", minDate.toISOString().split("T")[0]);
 }
-
 
 const selectDate = () => {
     const dateInput = document.querySelector('input[type="date"]');
@@ -398,7 +350,6 @@ const selectDate = () => {
 
 // This method returns the date in unix time, the number of post and sorting order.
 const getRequiredInformation = () => {
-
     const sortOrder = document.getElementById("sortOrder").value;
     const dateControl = document.querySelector('input[type="date"]').value;
     let today = new Date(dateControl); 
@@ -408,7 +359,6 @@ const getRequiredInformation = () => {
     const noOfPost = document.getElementById("numberOfPost").value;
     return [utctime, noOfPost, sortOrder];
 }
-
 
 setupDatePicker();
 selectDate();
