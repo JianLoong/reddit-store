@@ -1,7 +1,7 @@
 // Method to fetch the indexes
 const fetchIndex = () => {
     showLoading("submissionsLoading", true);
-    fetch("./api/indexes/indexes.json")
+    fetch("./api/indexes/indexes.json" + '?' + Math.random())
         .then(response => {
             if (response.ok)
                 return response.json();
@@ -25,11 +25,18 @@ const fetchIndex = () => {
                         sorted.push(element);
             })
 
-            if (sorted.length == 0){
-                document.getElementById("submissions").value.innerHTML = "";
+            if (sorted.length == 0) {
+
                 showErrorDiv("submissionsLoading", "No entries found for this date.");
+                let submissionDiv = document.getElementById("submissions");
+                submissionDiv.innerHTML = "";
                 return;
             }
+            showErrorDiv("submissionsLoading", "", false);
+
+            let submissionDiv = document.getElementById("submissions");
+            submissionDiv.innerHTML = "";
+
 
             if (order == "hot")
                 sorted.sort((a, b) => a.score - b.score);
@@ -52,8 +59,15 @@ const fetchIndex = () => {
         });
 }
 
-const showErrorDiv = (id, errorMessage) => {
+const showErrorDiv = (id, errorMessage, isShown) => {
+
     errorDiv = document.getElementById(id);
+
+    if (isShown == false) {
+        errorDiv.innerHTML = "";
+        return;
+    }
+    errorDiv.innerHTML = "";
     htmlString = '<div class="alert alert-warning" role="alert">';
     htmlString += errorMessage;
     htmlString += '</div >'
@@ -62,6 +76,7 @@ const showErrorDiv = (id, errorMessage) => {
 
 const fetchSubmission = (index) => {
     showLoading(index + "_submissionLoading", true);
+
     fetch("./api/submissions/" + index + ".json")
         .then(response => {
             if (response.ok)
@@ -342,11 +357,11 @@ const selectDate = () => {
 // This method returns the date in unix time, the number of post and sorting order.
 const getRequiredInformation = () => {
     const endOfDay = document.getElementById("date").valueAsDate;
-    if (endOfDay == null) {
+    if (endOfDay == null || endOfDay == undefined) {
         showErrorDiv("submissions", "Please enter a valid date");
         return;
     }
-
+    
     endOfDay.setDate(endOfDay.getDate() + 1);
     endOfDay.setUTCHours(0, 0, 0, 0);
     let startOfDay = new Date();
