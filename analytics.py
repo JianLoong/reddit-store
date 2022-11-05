@@ -77,7 +77,7 @@ def get_submissions():
     # This does not need to be date aware
     today = datetime.today() 
     start = datetime(today.year, today.month, today.day) + timedelta(1)
-    yesterday = start - timedelta(1)
+    yesterday = start - timedelta(2)
     
     # Convert time to UTC time
     start_utc = calendar.timegm(start.timetuple())
