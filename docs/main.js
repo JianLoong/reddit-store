@@ -1,8 +1,5 @@
 // Method to fetch the indexes
 const fetchIndex = () => {
-    let submissionDiv = document.getElementById("submissions");
-    submissionDiv.innerHTML = "";
-    showLoading("submissionsLoading", true);
     fetch("./api/indexes/indexes.json" + '?' + Math.random())
         .then(response => {
             if (response.ok)
@@ -10,56 +7,53 @@ const fetchIndex = () => {
             throw new Error("Something went wrong")
         })
         .then(result => {
-            showLoading("submissionsLoading", false);
-            const data = result;
             const query = getRequiredInformation();
-
-            const startUTC = query[0];
-            const endUTC = query[1];
-            const noOfPost = query[2];
-            const order = query[3];
-
-            const sorted = [];
-            data.map((element) => {
-                const utc = element["created_utc"];
-                if (utc > startUTC)
-                    if (utc < endUTC)
-                        sorted.push(element);
-            })
-
-            if (sorted.length == 0) {
-
-                showErrorDiv("submissionsLoading", "No entries found for this date.");
-
-                submissionDiv.innerHTML = "";
-                return;
-            }
-            showErrorDiv("submissionsLoading", "", false);
-
-            let submissionDiv = document.getElementById("submissions");
-            submissionDiv.innerHTML = "";
-
-
-            if (order == "hot")
-                sorted.sort((a, b) => a.score - b.score);
-            else
-                sorted.sort((a, b) => b.created_utc - a.created_utc);
-
-            const sliced = sorted.slice(0, noOfPost);
-
-            let indexes = [];
-            indexes.push(...sliced.map(e => e.id));
-
-            createDiv(indexes);
-
-            for (let index of indexes)
+            return [result, query];
+        })
+        .then(result => {
+            const indexes = sortIndexes(result[0], result[1]);
+            return indexes;
+        })
+        .then(result => {
+            createDiv(result);
+            for (let index of result)
                 fetchSubmission(index);
         })
         .catch(err => {
-            console.log(err);
-            submissionDiv.innerHTML = "";
-            showErrorDiv("submissions", "No entries found. Please enter a valid date.");
+
         });
+}
+
+const sortIndexes = (data, info) => {
+
+    const startUTC = info[0];
+    const endUTC = info[1];
+    const noOfPost = info[2];
+    const order = info[3];
+
+    const sorted = [];
+    data.map((element) => {
+        const utc = element["created_utc"];
+        if (utc > startUTC)
+            if (utc < endUTC)
+                sorted.push(element);
+    })
+
+    if (sorted.length == 0) {
+        throw new Error("No entries found.")
+    }
+
+    if (order == "hot")
+        sorted.sort((a, b) => a.score - b.score);
+    else
+        sorted.sort((a, b) => b.created_utc - a.created_utc);
+
+    const sliced = sorted.slice(0, noOfPost);
+
+    let indexes = [];
+    indexes.push(...sliced.map(e => e.id));
+
+    return indexes;
 }
 
 const showErrorDiv = (id, errorMessage, isShown) => {
@@ -93,7 +87,6 @@ const fetchSubmission = (index) => {
             processSentiments(index);
         })
         .catch(err => {
-            console.log(err);
             showErrorDiv("submissions", "Please try at another time.")
         });
 }
@@ -239,7 +232,6 @@ const processSentiments = (id) => {
         })
         .catch(err => {
             showLoading(id + "_sentimentLoading", false);
-            console.log(err);
             showErrorDiv(id + "_sentimentLoading", "Something went wrong")
         });
 
@@ -352,27 +344,26 @@ const setupDatePicker = () => {
 
 const selectDate = () => {
     const dateInput = document.querySelector('input[type="date"]');
+
     dateInput.addEventListener("input", (event) => {
         fetchIndex();
     })
+
 }
 
 // This method returns the date in unix time, the number of post and sorting order.
 const getRequiredInformation = () => {
     const endOfDay = document.getElementById("date").valueAsDate;
     if (endOfDay == null || endOfDay == undefined) {
-        showErrorDiv("submissions", "Please enter a valid date");
-        return;
+        throw new Error("Please enter a valid date.")
     }
 
- 
     const day = new Date();
     const startOfDay = new Date(endOfDay);
     endOfDay.setDate(endOfDay.getDate() + 1);
 
-    startOfDay.setHours(0,0,0,0);
-    endOfDay.setHours(0,0,0,0);
-
+    startOfDay.setHours(0, 0, 0, 0);
+    endOfDay.setHours(0, 0, 0, 0);
 
 
     const startUTC = startOfDay.getTime() / 1000;
