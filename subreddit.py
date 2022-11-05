@@ -127,15 +127,15 @@ def create_warehouse():
     # This function will make indices in for the API to consume with the submission IDs and the file name is the unix timestamp
 
     # This does not need to be date aware
-    today = datetime.today()
-    start = datetime(today.year, today.month, today.day)
+    today = datetime.today() 
+    start = datetime(today.year, today.month, today.day) + timedelta(1)
     yesterday = start - timedelta(1)
     
     # Convert time to UTC time
     start_utc = calendar.timegm(start.timetuple())
     yesterday_utc = calendar.timegm(yesterday.timetuple())
     
-    query = Submission.select().where(Submission.created_utc.between(yesterday_utc, start_utc)).order_by(Submission.score.desc())
+    query = Submission.select().order_by(Submission.score.desc())
       
     submissions = list(query.dicts())
     
@@ -145,6 +145,7 @@ def create_warehouse():
     indexes = []
     created_utcs = []
     scores = []
+    entries = []
         
     for index in range(0,len(submissions)):
         _submission_id = (submissions[index]["submission_id"])
@@ -152,9 +153,14 @@ def create_warehouse():
         _score = submissions[index]["score"]
         _created_utc = submissions[index]["created_utc"]
         
-        indexes.append(_submission_pk)
-        scores.append(_score)
-        created_utcs.append(_created_utc)
+        # indexes.append(_submission_pk)
+        # scores.append(_score)
+        # created_utcs.append(_created_utc)
+        entry = {
+            "id": _submission_pk,
+            "scores": _score,
+            "created_utc": _created_utc
+        }
 
         _comment_query = Comment.select(Comment.message).where(Comment.submission == _submission_id)
         _replies_list = list(_comment_query.dicts())
@@ -165,17 +171,18 @@ def create_warehouse():
         submissions[index]["replies"] = replies
         # This is the summary of the submission
         write_to_file(json.dumps(submissions[index]), "./submissions/" + str(_submission_pk))
+        entries.append(entry)
     
     # print(json.dumps(submissions[0]))
     
-    json_indexes = {
-        "indexes": indexes,
-        "scores": scores,
-        "created_utcs": created_utcs
-    }
+    # json_indexes = {
+    #     "indexes": indexes,
+    #     "scores": scores,
+    #     "created_utcs": created_utcs
+    # }
     
     # Create indexes for query
-    write_to_file(json.dumps(json_indexes), "./indexes/" + str(yesterday_utc))
+    write_to_file(json.dumps(entries), "./indexes/" + "indexes")
 
 def write_to_file(json, file_name):
     f = open("./docs/api/" + str(file_name) + ".json", "w")

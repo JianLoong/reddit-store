@@ -75,14 +75,14 @@ def process(submissions):
 def get_submissions():
     # This function will make indices in for the API to consume with the submission IDs and the file name is the unix timestamp
     # This does not need to be date aware
-    today = datetime.today()
-    start = datetime(today.year, today.month, today.day)
+    today = datetime.today() 
+    start = datetime(today.year, today.month, today.day) + timedelta(1)
     yesterday = start - timedelta(1)
     
     # Convert time to UTC time
     start_utc = calendar.timegm(start.timetuple())
     yesterday_utc = calendar.timegm(yesterday.timetuple())
-    
+    # .where(Submission.created_utc.between(yesterday_utc, start_utc))
     query = Submission.select().where(Submission.created_utc.between(yesterday_utc, start_utc)).order_by(Submission.score.desc())
       
     submissions = list(query.dicts())
