@@ -1,5 +1,6 @@
 // Method to fetch the indexes
 const fetchIndex = () => {
+    showLoading("submissionsLoading", true);
     fetch("./api/indexes/indexes.json")
         .then(response => {
             if (response.ok)
@@ -7,37 +8,29 @@ const fetchIndex = () => {
             throw new Error("Something went wrong")
         })
         .then(result => {
+            showLoading("submissionsLoading", false);
             const data = result;
-
             const query = getRequiredInformation();
-
-            //console.log(data);
 
             const startUTC = query[0];
             const endUTC = query[1];
             const noOfPost = query[2];
             const order = query[3];
 
-            //console.log(startUTC);
-            // console.log(endUTC);
-
             const sorted = [];
-
             data.map((element) => {
                 const utc = element["created_utc"];
                 if (utc > startUTC)
-                    if( utc < endUTC)
+                    if (utc < endUTC)
                         sorted.push(element);
             })
 
             if (order == "hot")
-                sorted.sort((a,b) => a.score - b.score);
+                sorted.sort((a, b) => a.score - b.score);
             else
-            sorted.sort((a,b) => b.created_utc - a.created_utc);
+                sorted.sort((a, b) => b.created_utc - a.created_utc);
 
             const sliced = sorted.slice(0, noOfPost);
-
-            // console.log(sliced);
 
             let indexes = [];
             indexes.push(...sliced.map(e => e.id));
@@ -47,44 +40,11 @@ const fetchIndex = () => {
             for (let index of indexes)
                 fetchSubmission(index);
         })
+        .catch(err => {
+            console.log(err);
+            // showErrorDiv("submissions", "Please try at another time.");
+        });
 }
-
-// const fetchIndexes = (utc, size, order) => {
-//     showLoading("submissionsLoading", true);
-//     document.getElementById("submissions").innerHTML = "";
-//     if (size > 100) {
-//         showErrorDiv("submissions", "Cannot retrieve more than 100 post per page")
-//         return;
-//     }
-
-//     fetch("./api/indexes/" + utc + ".json")
-//         .then(response => {
-//             if (response.ok)
-//                 return response.json();
-//             throw new Error("Something went wrong")
-//         })
-//         .then(data => {
-//             showLoading("submissionsLoading", false);
-//             const response = data;
-//             let indexes = response["indexes"];
-//             let created_utcs = response["created_utcs"];
-//             let scores = response["scores"];
-
-//             sortedIndexes = sortIndexes(indexes, created_utcs, scores);
-//             sortedIndexes = sortedIndexes.slice(0, size);
-//             // We build empty divs in preparation for the payload
-//             createDiv(sortedIndexes);
-//             // We can now fetch the submissions
-//             for (let index of sortedIndexes)
-//                 fetchSubmission(index);
-
-//         })
-//         .catch(err => {
-//             console.log(err);
-//             // showErrorDiv("submissions", "Please try at another time.");
-//         });
-// }
-
 
 const showErrorDiv = (id, errorMessage) => {
     errorDiv = document.getElementById(id);
@@ -95,7 +55,7 @@ const showErrorDiv = (id, errorMessage) => {
 }
 
 const fetchSubmission = (index) => {
-
+    showLoading(index + "_submissionLoading", true);
     fetch("./api/submissions/" + index + ".json")
         .then(response => {
             if (response.ok)
@@ -103,14 +63,14 @@ const fetchSubmission = (index) => {
             throw new Error("Something went wrong");
         })
         .then(data => {
-            // showLoading(index + "_submissionLoading", false);
+            showLoading(index + "_submissionLoading", false);
             const json = data;
             buildSubmissions(json);
             processSentiments(index);
         })
         .catch(err => {
             console.log(err);
-            // showErrorDiv("submissions", "Please try at another time.")
+            showErrorDiv("submissions", "Please try at another time.")
         });
 }
 
@@ -133,18 +93,12 @@ const makeHTMLFromString = (str) => {
 
 const createDiv = (indexes) => {
     const submissionsDiv = document.getElementById("submissions");
-
     let htmlString = "";
     for (const index of indexes) {
         htmlString += "<div class='card'><div class='card-body'>";
-
         htmlString += "<div id =" + index + "_submissionLoading></div>";
         htmlString += "<div id =" + index + "_submission></div>";
-
-
-
         htmlString += "<div id =" + index + "_sentimentLoading></div>";
-
         htmlString += "<div class='row' class='" + index + "'>"
         htmlString += "<div class='col-md-4'>"
 
@@ -160,13 +114,9 @@ const createDiv = (indexes) => {
 
         let nrc = index + "_nrc";
         htmlString += "<div class='' id =" + nrc + "></div>";
-
         htmlString += "</div>";
-
         let chart = index + "_chart";
-
         htmlString += "<div class='col-md-4'>"
-
         htmlString += "<canvas id='" + chart + "'width='' height='400'></canvas>";
         htmlString += "</div>";
         htmlString += "</div></div></div><p></p>";
@@ -267,7 +217,9 @@ const processSentiments = (id) => {
             makeCloud(id, response["word_freq"]);
         })
         .catch(err => {
+            showLoading(id + "_sentimentLoading", false);
             console.log(err);
+            showErrorDiv(id + "_sentimentLoading", "Something went wrong")
         });
 
 }
@@ -353,8 +305,6 @@ const buildChart = (id, dataArr) => {
 const selectPost = () => {
     const noOfPost = document.getElementById("numberOfPost");
     noOfPost.addEventListener("change", (event) => {
-        let info = getRequiredInformation();
-        //fetchIndexes(info[0], info[1], info[2]);
         fetchIndex();
     })
 }
@@ -362,27 +312,18 @@ const selectPost = () => {
 const selectOrder = () => {
     sortOrder.addEventListener("change", (event) => {
         let info = getRequiredInformation();
-        //fetchIndexes(info[0], info[1], info[2]);
         fetchIndex();
     })
 }
 
 const defaultPosts = () => {
-    //     let today = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000);
-    //     let yesterday = new Date(); //(now.getTime() + now.getTimezoneOffset() * 60000)
-    //     yesterday.setDate(today.getDate() - 1)
-    //     const yesterday_utc = Date.UTC(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()) / 1000;
-    //const info = getRequiredInformation();
     fetchIndex();
 }
 
 const setupDatePicker = () => {
     const dateControl = document.querySelector('input[type="date"]');
-
     let max = new Date().toLocaleString('sv').split(" ")[0];
-
     const minDate = new Date(Date.UTC(2022, 10, 01));
-
     dateControl.value = max;
     dateControl.setAttribute("max", max);
     dateControl.setAttribute("min", minDate.toISOString().split("T")[0]);
@@ -391,8 +332,6 @@ const setupDatePicker = () => {
 const selectDate = () => {
     const dateInput = document.querySelector('input[type="date"]');
     dateInput.addEventListener("input", (event) => {
-        let info = getRequiredInformation();
-        //fetchIndexes(info[0], info[1], info[2]);
         fetchIndex();
     })
 }
@@ -403,7 +342,6 @@ const getRequiredInformation = () => {
 
     endOfDay.setDate(endOfDay.getDate() + 1);
     endOfDay.setUTCHours(0, 0, 0, 0);
-
     let startOfDay = new Date();
     startOfDay.setUTCHours(0, 0, 0, 0);
     startOfDay.setDate(endOfDay.getDate() - 1);
