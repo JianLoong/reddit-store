@@ -1,3 +1,12 @@
+@font-face {
+    font-family: 'atkinson_hyperlegibleregular';
+    src: url('./font/atkinsonhyperlegible-regular-webfont.woff2') format('woff2'),
+         url('./font/atkinsonhyperlegible-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
 body {
     font-family: 'Atkinson Hyperlegible', -apple-system,BlinkMacSystemFont,segoe ui,Roboto,Oxygen,Ubuntu,Cantarell,open sans,helvetica neue,sans-serif;
 }

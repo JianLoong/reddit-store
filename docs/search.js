@@ -233,15 +233,27 @@ const searchInput = (searchCorpus) => {
         const submissionDiv = document.getElementById("submission");
         const searchResults = document.getElementById("searchResults");
         const submissionSentimentDiv = document.getElementById("submissionSentiment")
+        const noResultsDiv = document.getElementById("noResults");
 
         submissionDiv.innerHTML = "";
         submissionSentimentDiv.innerHTML = "";
         searchResults.innerHTML = "";
+        noResultsDiv.innerHTML = "";
 
         const searchQuery = event.target.value;
         const results = fuse.search(searchQuery);
 
         htmlString = "";
+
+        if (results.length == 0){
+
+            htmlString += '<div class="alert alert-info" role="alert">No results found.</div>';
+            
+            noResultsDiv.innerHTML = htmlString;
+            resultDiv.classList.add("d-none");
+            return;
+        }
+
         for (let result of results) {
             htmlString += "<tr id='" + result["id"] + "' class='searchRow'><td>" + result["id"] + "</td>";
             htmlString += " ";
