@@ -1,5 +1,7 @@
 // Method to fetch the indexes
 const fetchIndex = () => {
+    let submissionDiv = document.getElementById("submissions");
+    submissionDiv.innerHTML = "";
     showLoading("submissionsLoading", true);
     fetch("./api/indexes/indexes.json" + '?' + Math.random())
         .then(response => {
@@ -28,7 +30,7 @@ const fetchIndex = () => {
             if (sorted.length == 0) {
 
                 showErrorDiv("submissionsLoading", "No entries found for this date.");
-                let submissionDiv = document.getElementById("submissions");
+
                 submissionDiv.innerHTML = "";
                 return;
             }
@@ -55,6 +57,7 @@ const fetchIndex = () => {
         })
         .catch(err => {
             console.log(err);
+            submissionDiv.innerHTML = "";
             showErrorDiv("submissions", "No entries found. Please enter a valid date.");
         });
 }
@@ -361,12 +364,16 @@ const getRequiredInformation = () => {
         showErrorDiv("submissions", "Please enter a valid date");
         return;
     }
-    
+
+ 
+    const day = new Date();
+    const startOfDay = new Date(endOfDay);
     endOfDay.setDate(endOfDay.getDate() + 1);
-    endOfDay.setUTCHours(0, 0, 0, 0);
-    let startOfDay = new Date();
-    startOfDay.setUTCHours(0, 0, 0, 0);
-    startOfDay.setDate(endOfDay.getDate() - 1);
+
+    startOfDay.setHours(0,0,0,0);
+    endOfDay.setHours(0,0,0,0);
+
+
 
     const startUTC = startOfDay.getTime() / 1000;
     const endUTC = endOfDay.getTime() / 1000;

@@ -228,6 +228,7 @@ const searchInput = (searchCorpus) => {
 
         resultDiv.classList.remove("d-none");
         // Remove autofocus
+        searchInputBox.blur();
         searchInputBox.removeAttribute("autofocus");
 
         const submissionDiv = document.getElementById("submission");
