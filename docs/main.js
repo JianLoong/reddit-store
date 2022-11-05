@@ -25,6 +25,12 @@ const fetchIndex = () => {
                         sorted.push(element);
             })
 
+            if (sorted.length == 0){
+                document.getElementById("submissions").value.innerHTML = "";
+                showErrorDiv("submissionsLoading", "No entries found for this date.");
+                return;
+            }
+
             if (order == "hot")
                 sorted.sort((a, b) => a.score - b.score);
             else
@@ -42,7 +48,7 @@ const fetchIndex = () => {
         })
         .catch(err => {
             console.log(err);
-            // showErrorDiv("submissions", "Please try at another time.");
+            showErrorDiv("submissions", "No entries found. Please enter a valid date.");
         });
 }
 
@@ -107,9 +113,7 @@ const createDiv = (indexes) => {
 
         let cloudId = index + "_cloud";
         htmlString += "<div id='" + cloudId + "'></div>";
-
         htmlString += "</div>"
-
         htmlString += "<div class='col-md-4'>"
 
         let nrc = index + "_nrc";
@@ -131,7 +135,6 @@ const makeCloud = (id, words) => {
     words = Object.keys(words);
     let keys = Object.keys(words);
     let values = Object.values(words);
-
     let processedWords = [];
 
     let sum = 0;
@@ -339,6 +342,10 @@ const selectDate = () => {
 // This method returns the date in unix time, the number of post and sorting order.
 const getRequiredInformation = () => {
     const endOfDay = document.getElementById("date").valueAsDate;
+    if (endOfDay == null) {
+        showErrorDiv("submissions", "Please enter a valid date");
+        return;
+    }
 
     endOfDay.setDate(endOfDay.getDate() + 1);
     endOfDay.setUTCHours(0, 0, 0, 0);
