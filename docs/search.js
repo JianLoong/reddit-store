@@ -33,19 +33,13 @@ const createSentimentDiv = (index) => {
     htmlString += "<div class='col-lg-4'>"
     let nrc = index + "_nrc";
     htmlString += "<div class='' id =" + nrc + "></div>";
-
     htmlString += "</div>";
-
     let chart = index + "_chart";
-
     htmlString += "<div class='col-lg-4'>"
     // htmlString += "<h5 class='card-title'><p class=text-center>" + "Breakdown of Replies" + "</p></h5>";
     htmlString += "<canvas id='" + chart + "'width='' height='400'></canvas>";
     htmlString += "</div>";
-
-
     htmlString += "</div></div></div><p></p>";
-
     submissionDiv.innerHTML = htmlString;
 
 }
@@ -77,6 +71,7 @@ const showLoading = (id, isLoading, loadingMessage) => {
     else
         postDiv.classList.remove("spinner-border");
 }
+
 
 const tableRowListener = () => {
     const rows = document.querySelectorAll(".searchRow");
@@ -226,11 +221,14 @@ const searchInput = (searchCorpus) => {
     searchInputBox.addEventListener(("keypress"), (event) => {
         if (event.key != "Enter")
             return;
+
         event.preventDefault();
 
         const resultDiv = document.getElementById("resultDiv");
 
         resultDiv.classList.remove("d-none");
+        // Remove autofocus
+        searchInputBox.removeAttribute("autofocus");
 
         const submissionDiv = document.getElementById("submission");
         const searchResults = document.getElementById("searchResults");

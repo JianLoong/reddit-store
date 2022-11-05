@@ -65,7 +65,7 @@ def get_submissions():
     )
 
     display = 1
-    for submission in reddit.subreddit(subreddit_name).new(limit=POST_LIMIT):
+    for submission in reddit.subreddit(subreddit_name).hot(limit=POST_LIMIT):
         print(display)
         display = display + 1
         submission.comments.replace_more(limit=0)
