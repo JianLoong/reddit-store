@@ -1,5 +1,27 @@
 // Method to fetch the indexes
-const fetchIndex = () => {
+
+const defaultStartUTC = () => {
+    const startOfToDay = new Date();
+    startOfToDay.setHours(0, 0, 0, 0);
+    const startUTC = startOfToDay.getTime() / 1000;
+    return startUTC;
+}
+
+const defaultEndUTC = () => {
+
+    const endOfToday = new Date();
+    endOfToday.setDate(endOfToday.getDate() + 1);
+    endOfToday.setHours(0, 0, 0, 0);
+    const endUTC = endOfToday.getTime() / 1000;
+    return endUTC;
+}
+
+const fetchIndex = ({
+    order = "hot",
+    startUTC = defaultStartUTC(),
+    endUTC = defaultEndUTC(),
+    noOfPost = 10
+} = {}) => {
     fetch("./api/indexes/indexes.json" + '?' + Math.random())
         .then(response => {
             if (response.ok)
@@ -7,11 +29,7 @@ const fetchIndex = () => {
             throw new Error("Something went wrong")
         })
         .then(result => {
-            const query = getRequiredInformation();
-            return [result, query];
-        })
-        .then(result => {
-            const indexes = sortIndexes(result[0], result[1]);
+            const indexes = sortIndexes(result, startUTC, endUTC, noOfPost, order);
             return indexes;
         })
         .then(result => {
@@ -20,16 +38,13 @@ const fetchIndex = () => {
                 fetchSubmission(index);
         })
         .catch(err => {
-
+            //showErrorDiv("submissionLoading", err.getMessage(), true);
+            //console.log(err);
+            setupDatePicker();
         });
 }
 
-const sortIndexes = (data, info) => {
-
-    const startUTC = info[0];
-    const endUTC = info[1];
-    const noOfPost = info[2];
-    const order = info[3];
+const sortIndexes = (data, startUTC, endUTC, noOfPost, order) => {
 
     const sorted = [];
     data.map((element) => {
@@ -98,7 +113,6 @@ const showLoading = (id, isLoading, loadingMessage) => {
     else
         postDiv.classList.remove("spinner-border");
 }
-
 
 const makeHTMLFromString = (str) => {
     let text = str;
@@ -315,23 +329,47 @@ const buildChart = (id, dataArr) => {
     });
 };
 
+const config = () => {
+    const noOfPost = document.getElementById("numberOfPost").value;
+    const sortOrder = document.getElementById("sortOrder").value;
+    const dateInput = document.querySelector('input[type="date"]');
+    const day = dateInput.valueAsDate;
+
+    const startOfDay = new Date(day);
+    const endOfDay = new Date(day);
+    startOfDay.setHours(0, 0, 0, 0);
+    endOfDay.setHours(24, 0, 0, 0);
+
+    const startUTC = startOfDay.getTime() / 1000;
+    const endUTC = endOfDay.getTime() / 1000;
+
+    return {
+        "startUTC": startUTC || defaultStartUTC,
+        "endUTC": endUTC || defaultEndUTC,
+        "noOfPost": noOfPost,
+        "order": sortOrder
+    }
+
+}
 const selectPost = () => {
     const noOfPost = document.getElementById("numberOfPost");
     noOfPost.addEventListener("change", (event) => {
-        fetchIndex();
+        fetchIndex(config());
     })
 }
 
 const selectOrder = () => {
+    const sortOrder = document.getElementById("sortOrder");
     sortOrder.addEventListener("change", (event) => {
-        let info = getRequiredInformation();
-        fetchIndex();
+        fetchIndex(config());
     })
 }
 
 const defaultPosts = () => {
     fetchIndex();
 }
+
+
 
 const setupDatePicker = () => {
     const dateControl = document.querySelector('input[type="date"]');
@@ -344,35 +382,9 @@ const setupDatePicker = () => {
 
 const selectDate = () => {
     const dateInput = document.querySelector('input[type="date"]');
-
-    dateInput.addEventListener("input", (event) => {
-        fetchIndex();
+    dateInput.addEventListener("blur", (event) => {
+        fetchIndex(config());
     })
-
-}
-
-// This method returns the date in unix time, the number of post and sorting order.
-const getRequiredInformation = () => {
-    const endOfDay = document.getElementById("date").valueAsDate;
-    if (endOfDay == null || endOfDay == undefined) {
-        throw new Error("Please enter a valid date.")
-    }
-
-    const day = new Date();
-    const startOfDay = new Date(endOfDay);
-    endOfDay.setDate(endOfDay.getDate() + 1);
-
-    startOfDay.setHours(0, 0, 0, 0);
-    endOfDay.setHours(0, 0, 0, 0);
-
-
-    const startUTC = startOfDay.getTime() / 1000;
-    const endUTC = endOfDay.getTime() / 1000;
-
-    const noOfPost = document.getElementById("numberOfPost").value;
-    const sortOrder = document.getElementById("sortOrder").value;
-
-    return [startUTC, endUTC, noOfPost, sortOrder];
 }
 
 setupDatePicker();
