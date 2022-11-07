@@ -1,33 +1,42 @@
 // Method to fetch the indexes
 const fetchIndex = ({
-    order,
-    startUTC,
-    endUTC,
-    noOfPost
+    order = "hot",
+    startUTC = defaultStartUTC(),
+    endUTC = defaultEndUTC(),
+    noOfPost = 10
 } = {}) => {
+
+    showLoading("submissionsLoading", true);
+   
     fetch("./api/indexes/indexes.json" + '?' + Math.random())
         .then(response => {
             if (response.ok)
                 return response.json();
-            throw new Error("Something went wrong")
+            throw new Error("Something went wrong");
         })
         .then(result => {
             const indexes = sortIndexes(result, startUTC, endUTC, noOfPost, order);
+
             return indexes;
         })
         .then(result => {
+            showLoading("submissionsLoading", false);
             const submissionsDiv = document.getElementById("submissions");
-  
+           
+
             submissionsDiv.innerHTML = createDiv(result);
             for (let index of result)
                 fetchSubmission(index);
         })
         .catch(err => {
-            //showErrorDiv("submissionLoading", err.getMessage(), true);
-            //console.log(err);
+            console.log(err);
+            showErrorDiv("searchInvalid", err, true);
+            showLoading("submissionsLoading", false);
+            document.getElementById("submissions").classList.add("d-none");
             //setupDatePicker();
         });
 }
+
 
 const fetchSubmission = (index) => {
     showLoading(index + "_submissionLoading", true);
@@ -100,40 +109,45 @@ const processSentiments = (id) => {
 
             const emotions = response["emotion"];
             nrcResultsDiv.innerHTML = processNRC(emotions);
-            
+
             const cloudLocation = id + "_cloud";
             makeCloud(cloudLocation, response["word_freq"]);
 
         })
         .catch(err => {
             showLoading(id + "_sentimentLoading", false);
-            showErrorDiv(id + "_sentimentLoading", "Something went wrong")
+            showErrorDiv(id + "_sentimentLoading", true)
         });
 
 }
 
+const defaultStartUTC = () => {
+    const startOfToDay = new Date();
+    startOfToDay.setHours(0, 0, 0, 0);
+    const startUTC = startOfToDay.getTime() / 1000;
+    return startUTC;
+}
+
+const defaultEndUTC = () => {
+
+    const endOfToday = new Date();
+    endOfToday.setDate(endOfToday.getDate() + 1);
+    endOfToday.setHours(0, 0, 0, 0);
+    const endUTC = endOfToday.getTime() / 1000;
+    return endUTC;
+}
+
 const config = () => {
 
-    const defaultStartUTC = () => {
-        const startOfToDay = new Date();
-        startOfToDay.setHours(0, 0, 0, 0);
-        const startUTC = startOfToDay.getTime() / 1000;
-        return startUTC;
-    }
-    
-    const defaultEndUTC = () => {
-    
-        const endOfToday = new Date();
-        endOfToday.setDate(endOfToday.getDate() + 1);
-        endOfToday.setHours(0, 0, 0, 0);
-        const endUTC = endOfToday.getTime() / 1000;
-        return endUTC;
-    }
-    
+
+
     const noOfPost = document.getElementById("numberOfPost").value;
     const sortOrder = document.getElementById("sortOrder").value;
     const dateInput = document.querySelector('input[type="date"]');
     const day = dateInput.valueAsDate;
+
+    if (day == undefined)
+        throw new Error("Enter a valid date");
 
     const startOfDay = new Date(day);
     const endOfDay = new Date(day);
@@ -156,20 +170,41 @@ const defaultPosts = () => {
     fetchIndex(config());
 }
 
+const validateQuery = () => {
+
+    let query = {};
+    const submissionsDiv = document.getElementById("submissions");
+    submissionsDiv.classList.add("d-none");
+    try {
+        query = config();
+        submissionsDiv.classList.remove("d-none");
+        showErrorDiv("searchInvalid", "", false);
+    } catch (error) {
+        showErrorDiv("searchInvalid", error, true);
+        submissionsDiv.classList.add("d-none");
+    }
+
+    return query;
+}
+
 const setUpListeners = () => {
+
     const dateInput = document.querySelector('input[type="date"]');
-    dateInput.addEventListener("blur", (event) => {
-        fetchIndex(config());
+    dateInput.addEventListener("change", (event) => {
+        let query = validateQuery();
+        fetchIndex(query);
     });
 
     const sortOrder = document.getElementById("sortOrder");
     sortOrder.addEventListener("change", (event) => {
-        fetchIndex(config());
+        let query = validateQuery();
+        fetchIndex(query);
     });
 
     const noOfPost = document.getElementById("numberOfPost");
     noOfPost.addEventListener("change", (event) => {
-        fetchIndex(config());
+        let query = validateQuery();
+        fetchIndex(query);;
     });
 
     const setupDatePicker = () => {
@@ -184,5 +219,36 @@ const setUpListeners = () => {
     setupDatePicker();
 }
 
-setUpListeners();
-defaultPosts();
+const showErrorDiv = (id, errorMessage, isShown) => {
+
+    errorDiv = document.getElementById(id);
+
+    if (isShown == false) {
+        errorDiv.classList.add("d-none");
+        return;
+    }
+    errorDiv.classList.remove("d-none");
+    htmlString = '<div class="alert alert-warning" role="alert">';
+    htmlString += errorMessage;
+    htmlString += '</div >'
+    errorDiv.innerHTML = htmlString;
+
+    return htmlString;
+}
+
+const showLoading = (id, isLoading, loadingMessage) => {
+    const postDiv = document.getElementById(id);
+    if (isLoading){
+        postDiv.classList.add("spinner-border");
+        postDiv.classList.remove("d-none");
+    }
+    else{
+        postDiv.classList.remove("spinner-border");
+        postDiv.classList.add("d-none");
+    }
+}
+
+
+const ac = new AbortController();
+setUpListeners(ac);
+defaultPosts(ac);

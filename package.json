@@ -1,0 +1,18 @@
+{
+    "name": "electron-quick-start",
+    "version": "1.0.0",
+    "description": "A minimal Electron application",
+    "main": "main.js",
+    "scripts": {
+        "start": "lite-server  --baseDir=./docs"
+    },
+    "port": 8080,
+    "files": [
+        "./src/**/*.{html,htm,css,js}"
+    ],
+    "server": {
+        "baseDir": "./src"
+    },
+    "keywords": [],
+    "devDependencies": {}
+}

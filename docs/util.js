@@ -156,13 +156,6 @@ const makeCloud = (cloudLocation, words) => {
 
 }
 
-const showLoading = (id, isLoading, loadingMessage) => {
-    const postDiv = document.getElementById(id);
-    if (isLoading)
-        postDiv.classList.add("spinner-border");
-    else
-        postDiv.classList.remove("spinner-border");
-}
 
 const createDiv = (indexes) => {
     let htmlString = "";
@@ -195,17 +188,3 @@ const createDiv = (indexes) => {
     return htmlString;
 }
 
-const showErrorDiv = (id, errorMessage, isShown) => {
-
-    errorDiv = document.getElementById(id);
-
-    if (isShown == false) {
-        errorDiv.innerHTML = "";
-        return;
-    }
-    errorDiv.innerHTML = "";
-    htmlString = '<div class="alert alert-warning" role="alert">';
-    htmlString += errorMessage;
-    htmlString += '</div >'
-    errorDiv.innerHTML = htmlString;
-}

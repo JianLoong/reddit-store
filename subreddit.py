@@ -12,7 +12,7 @@ from peewee import *
 
 import config
 
-subreddit_name = "AmItheAsshole";
+subreddit_name = "AmItheAsshole"
 reddit = None
 db = SqliteDatabase(subreddit_name + '.sqlite')
 UPDATE = True
