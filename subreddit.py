@@ -84,6 +84,8 @@ def get_submissions():
             if UPDATE is False:
                 continue
             else:
+                if submission.selftext == "[removed]":
+                    continue
             # print("Updating submission")
                 update_query = Submission.update(title = submission.title, 
                                                     selftext = submission.selftext, 
