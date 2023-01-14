@@ -9,3 +9,4 @@ __pycac*
 config.py
 *.sqlite
 push.log
+app
