@@ -209,6 +209,7 @@ def update_index(entries):
     for entry in entries:
         if entry not in used:
             data.append(entry)
+            print("new entry")
             
     return data
 
