@@ -137,8 +137,8 @@ def create_warehouse():
     start_utc = calendar.timegm(start.timetuple())
     yesterday_utc = calendar.timegm(yesterday.timetuple())
     
-    # query = Submission.select().order_by(Submission.score.desc())
-    query = Submission.select().where(Submission.created_utc.between(yesterday_utc, start_utc))
+    query = Submission.select().order_by(Submission.score.desc())
+    # query = Submission.select().where(Submission.created_utc.between(yesterday_utc, start_utc))
         
       
     submissions = list(query.dicts())
@@ -194,7 +194,7 @@ def write_to_file(json, file_name):
     f.close()
         
 if __name__ == '__main__':
-    get_submissions()
+    # get_submissions()
     create_warehouse()
     # main()
 
