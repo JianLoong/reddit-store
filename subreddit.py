@@ -194,7 +194,7 @@ def write_to_file(json, file_name):
     f.close()
         
 if __name__ == '__main__':
-    # get_submissions()
+    get_submissions()
     create_warehouse()
     # main()
 
