@@ -137,8 +137,8 @@ def create_warehouse():
     start_utc = calendar.timegm(start.timetuple())
     yesterday_utc = calendar.timegm(yesterday.timetuple())
     
-    query = Submission.select().order_by(Submission.score.desc())
-    # query = Submission.select().where(Submission.created_utc.between(yesterday_utc, start_utc))
+    # query = Submission.select().order_by(Submission.score.desc())
+    query = Submission.select().where(Submission.created_utc.between(yesterday_utc, start_utc))
         
       
     submissions = list(query.dicts())
@@ -186,7 +186,32 @@ def create_warehouse():
     # }
     
     # Create indexes for query
-    write_to_file(json.dumps(entries), "./indexes/" + "indexes")
+    # write_to_file(json.dumps(entries), "./indexes/" + "indexes")
+    
+    data = update_index(entries)
+    write_to_file(json.dumps(data), "./indexes/" + "indexes")
+    
+def update_index(entries):
+     
+    with open("./docs/api/indexes/indexes.json", 'r') as json_file:
+        data = json.load(json_file)
+        
+    used = []
+        
+
+    for d in data:
+        for entry in entries:
+            if d["id"] == entry["id"]:
+                print("updating")
+                d.update(entry)
+                used.append(entry)
+        
+    for entry in entries:
+        if entry not in used:
+            data.append(entry)
+            
+    return data
+
 
 def write_to_file(json, file_name):
     f = open("./docs/api/" + str(file_name) + ".json", "w")
@@ -195,6 +220,6 @@ def write_to_file(json, file_name):
         
 if __name__ == '__main__':
     get_submissions()
-    # create_warehouse()
+    create_warehouse()
     # main()
 
