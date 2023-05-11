@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" class="h-100">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reddit AITA Visualisation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <link href="./site.css" rel="stylesheet">
+    <link rel="icon" href="https://jianliew.me/images/favicon.ico">
+</head>
+
+<body class="d-flex flex-column h-100">
+    <main class="flex-shrink-0">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="./index.html">&nbsp;Data Visualisation of <em>AITA</em></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item ">
+                            <a class="nav-link active" href="./index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./search.html">Search</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./about.html">About</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container-lg">
+            <h1></h1>
+            <hr>
+            
+            <p>Technologies used for this project</p>
+            <p>Back End</p>
+            <ul>
+                <li><strong>SQLite3</strong> - Currently with over 16,000 submissions and over 5 million comments (1.9 GB SQLite3 file size) with earliest data on November 1st 2022</li>
+                <li><strong>Python Scripts</strong> - Used to data crawl Reddit API, Data Analysis and Sentiment Analysis via libraries. (Done by initially creating a simple data warehouse)</li>
+                <li><strong>End Points</strong> - The Python scripts will also create summary end points will be consumed by the front end.</li>
+                <li><strong>Bash</strong> - Bash Scripts and cron jobs are used to automate the running of these processes. (These scripts are deployed on my RaspberryPi) and run every 2 hours</li>
+                <li><strong>GH Pages</strong> - GH Pages are used to host these pages and cached with CloudFlare - (So, this is actually a static site)</li>
+            </ul>
+            <p>Front End</p>
+            <ul>
+                <li><strong>JavaScript</strong> - Vanilla JavaScript used with several data visualisation libraries</li>
+                <li><strong>d3 Word Cloud</strong> - is used to generate the word cloud</li>
+                <li><strong>Bootstrap 5</strong> - Used to generate a responsive front end.</li>
+                <li><strong>ChartJS</strong> - Used to generate a the various charts.</li>
+            </ul>
+
+
+            <p><strong>Why not live data?</strong></p>
+            <p>The original idea of this project used live data. The old idea can be found <a href="https://jianliew.me/posts/2019/amitheasshole/">here</a></p>
+            <p>It is possible to obtain live data for this current project but it was decided due to the number of comments and the ease of using Python libraries at the backend, it would be 
+                better if the architecture was done this way. (The backend is responsible for creating API that would be consumed by the front end - There is no server as the 
+                hosting is done via GHpages.)
+            </p>
+
+            <p>For more information please visit the project page <a
+                    href="http://github.com/JianLoong/reddit-store">here</a>
+            </p>
+        </div>
+    </main>
+
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container">
+            <span class="text-muted">Project can be found <a href="https://github.com/JianLoong/reddit-store">here</a> .
+                This website updates itself every second hour based on data from Reddit</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3-selection@3.0.0/dist/d3-selection.min.js"></script>
+    <script src="./d3.layout.cloud.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="./util.js"></script>
+    <script src="./main.js"></script>
+</body>
+</html>
