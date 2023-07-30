@@ -7,6 +7,7 @@ cd /home/pi/reddit-store
 /home/pi/reddit-store/venv/bin/python /home/pi/reddit-store/subreddit.py
 /home/pi/reddit-store/venv/bin/python /home/pi/reddit-store/analytics.py
 /home/pi/reddit-store/venv/bin/python /home/pi/reddit-store/search.py
+/home/pi/reddit-store/venv/bin/python /home/pi/reddit-store/top.py
 git add .
 git commit -m "Updated"
 # GIT_SSH_COMMAND='ssh -i /home/pi/redditbot' git push 
