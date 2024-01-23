@@ -1,5 +1,9 @@
 # Reddit Data
 
+As of Jan 2024, this project is no longer maintained because the methodology of static API does not ongoing increase in size. 
+
+This was causing a build time of 15 minutes on gh-pages. This project has been migrated to use Fast API so submissions can comments can be queried more easily.
+
 A demo dashboard can be seen [here](https://jianliew.me/reddit-store)
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/JianLoong/reddit-store)
